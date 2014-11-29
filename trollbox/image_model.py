@@ -56,3 +56,17 @@ class ImageModel(QAbstractListModel):
             return url
         elif role == self.TagRole:
             return tags
+
+    def setData(self, index, value, role=Qt.DisplayRole):
+        """
+        Sets the role data for image stored at index to value
+        """
+        url, tags, local_path, icon = self.images[index]
+        if role == Qt.DecorationRole:
+            local_path = value
+            icon = QIcon(local_path)
+        elif role == Qt.DisplayRole:
+            url = value
+        elif role == self.TagRole:
+            tags = value
+        self.images[index] = url, tags, local_path, icon

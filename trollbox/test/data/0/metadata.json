@@ -1,0 +1,4 @@
+[ 
+    ["http://foo.bar", ["tng", "book"], "trollbox/test/data/0/images/book.jpg"], 
+    ["http://foo.baz", ["koop", "postmaster"], "trollbox/test/data/0/images/koop.jpg"] 
+]
