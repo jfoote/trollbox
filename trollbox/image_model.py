@@ -1,8 +1,11 @@
 import os, json
 
-from PySide.QtCore import QAbstractListModel
+from PySide.QtCore import QAbstractListModel, QModelIndex, Qt
+from PySide.QtGui import QIcon
 
 class ImageModel(QAbstractListModel):
+    TagRole = 0x101
+    
     def __init__(self, parent=None, troll_dir=None):
         QAbstractListModel.__init__(self, parent)
 
@@ -13,9 +16,13 @@ class ImageModel(QAbstractListModel):
             os.mkdir(self.troll_dir)
         self.metadata_path = os.path.join(self.troll_dir, "metadata.json")
         if os.path.exists(self.metadata_path):
-            self.images = json.load(open(self.metadata_path, "rt"))
+            metadata = json.load(open(self.metadata_path, "rt"))
         else:
-            self.images = {}
+            metadata = []
+
+        self.images = []
+        for url, tags, local_path in metadata:
+            self.images.append((url, tags, local_path, QIcon(local_path)))
 
     def image_dir(self):
         return os.path.join(self.troll_dir, "images")
@@ -23,17 +30,29 @@ class ImageModel(QAbstractListModel):
     def image_path(self, filename):
         return os.path.join(self.image_dir(), filename)
 
-    def rowCount(self, parent_index=None):
-        return len(self.images.keys())
+    def rowCount(self, parent_index=0):
+        return len(self.images[parent_index:])
 
     def addImage(self, url, tags, local_path):
         '''
         Adds an image with url and tags that has already been downloaded
         to local_path to the model.
         '''
-        self.images[url] = (tags, local_path)
+        icon = QIcon(local_path)
+        self.images.append((url, tags, local_path, icon))
         self.save()
 
     def save(self):
-        json.dump(self.images, open(self.metadata_path, "wt"))
+        json.dump([t[:3] for t in self.images], open(self.metadata_path, "wt"))
 
+    def data(self, index, role=Qt.DisplayRole):
+        """
+        Returns the image data for role stored at index
+        """
+        url, tags, local_path, icon = self.images[index]
+        if role == Qt.DecorationRole:
+            return icon
+        elif role == Qt.DisplayRole:
+            return url
+        elif role == self.TagRole:
+            return tags
