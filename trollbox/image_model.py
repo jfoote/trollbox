@@ -33,8 +33,11 @@ class ImageModel(QAbstractListModel):
     def rowCount(self, parent_qmi=None):
         if parent_qmi != None:
             i = parent_qmi.row()
+            if i == -1: # invalid index
+                i = 0
         else:
             i = 0
+        print "rowCount i", i
         return len(self.images[i:])
 
     def addImage(self, url, tags, local_path):
@@ -54,6 +57,7 @@ class ImageModel(QAbstractListModel):
         Returns the image data for role stored at index
         """
         index = qmi.row()
+        print "data index", index
         url, tags, local_path, icon = self.images[index]
         if role == Qt.DecorationRole:
             return icon
