@@ -24,10 +24,12 @@ class Test_ImageModel(TestCase):
         sample_path = os.path.join(file_dir, "data", "0")
         model = ImageModel(troll_dir=sample_path)
 
-        self.assertEqual(model.data(0, Qt.DisplayRole), "http://foo.bar")
-        self.assertEqual(model.data(0, ImageModel.TagRole), ["tng", "book"])
+        index = model.index(0, 0)
+        self.assertEqual(model.data(index, Qt.DisplayRole), "http://foo.bar")
+        self.assertEqual(model.data(index, ImageModel.TagRole), ["tng", "book"])
 
-        self.assertEqual(model.data(1, ImageModel.TagRole), ["koop", "postmaster"])
+        index = model.index(1, 0)
+        self.assertEqual(model.data(index, ImageModel.TagRole), ["koop", "postmaster"])
 
     def test_addImage(self):
 
@@ -40,7 +42,8 @@ class Test_ImageModel(TestCase):
             model = ImageModel(troll_dir=temp_dir)
             model.addImage("http://foo.bar", ["tng"], sample_path)
 
-            self.assertEqual(model.data(0, Qt.DisplayRole), "http://foo.bar")
+            index = model.index(0, 0)
+            self.assertEqual(model.data(index, Qt.DisplayRole), "http://foo.bar")
         finally:
             subprocess.call(["rm", "-rf", temp_dir])
 
@@ -57,7 +60,7 @@ class Test_ImageModel(TestCase):
 
             model_b = ImageModel(troll_dir=temp_dir)
 
-            self.assertEqual(model_b.data(0, Qt.DisplayRole), "http://foo.bar")
+            self.assertEqual(model_b.data(model.index(0, 0), Qt.DisplayRole), "http://foo.bar")
         finally:
             subprocess.call(["rm", "-rf", temp_dir])
 
@@ -71,13 +74,13 @@ class Test_ImageModel(TestCase):
         try:
             model = ImageModel(troll_dir=temp_dir)
             model.addImage("http://foo.bar", ["tng"], sample_path)
-            self.assertEqual(model.data(0, Qt.DisplayRole), "http://foo.bar")
+            self.assertEqual(model.data(model.index(0, 0), Qt.DisplayRole), "http://foo.bar")
             
-            model.setData(0, "http://bar.bar", Qt.DisplayRole)
-            self.assertEqual(model.data(0, Qt.DisplayRole), "http://bar.bar")
+            model.setData(model.index(0, 0), "http://bar.bar", Qt.DisplayRole)
+            self.assertEqual(model.data(model.index(0, 0), Qt.DisplayRole), "http://bar.bar")
 
             sample_path = os.path.join(file_dir, "data", "0", "images", "koop.jpg")
-            model.setData(0, sample_path, Qt.DecorationRole)
+            model.setData(model.index(0, 0), sample_path, Qt.DecorationRole)
             # no good way to check icon currently
         finally:
             subprocess.call(["rm", "-rf", temp_dir])
