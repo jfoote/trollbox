@@ -30,9 +30,9 @@ class ImageModel(QAbstractListModel):
     def image_path(self, filename):
         return os.path.join(self.image_dir(), filename)
 
-    def rowCount(self, parent_index=None):
-        if parent_index != None:
-            i = parent_index.row()
+    def rowCount(self, parent_qmi=None):
+        if parent_qmi != None:
+            i = parent_qmi.row()
         else:
             i = 0
         return len(self.images[i:])
@@ -49,10 +49,11 @@ class ImageModel(QAbstractListModel):
     def save(self):
         json.dump([t[:3] for t in self.images], open(self.metadata_path, "wt"))
 
-    def data(self, index, role=Qt.DisplayRole):
+    def data(self, qmi, role=Qt.DisplayRole):
         """
         Returns the image data for role stored at index
         """
+        index = qmi.row()
         url, tags, local_path, icon = self.images[index]
         if role == Qt.DecorationRole:
             return icon
@@ -61,10 +62,11 @@ class ImageModel(QAbstractListModel):
         elif role == self.TagRole:
             return tags
 
-    def setData(self, index, value, role=Qt.DisplayRole):
+    def setData(self, qmi, value, role=Qt.DisplayRole):
         """
         Sets the role data for image stored at index to value
         """
+        index = qmi.row()
         url, tags, local_path, icon = self.images[index]
         if role == Qt.DecorationRole:
             local_path = value
