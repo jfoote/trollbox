@@ -30,8 +30,12 @@ class ImageModel(QAbstractListModel):
     def image_path(self, filename):
         return os.path.join(self.image_dir(), filename)
 
-    def rowCount(self, parent_index=0):
-        return len(self.images[parent_index:])
+    def rowCount(self, parent_index=None):
+        if parent_index != None:
+            i = parent_index.row()
+        else:
+            i = 0
+        return len(self.images[i:])
 
     def addImage(self, url, tags, local_path):
         '''
