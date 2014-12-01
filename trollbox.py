@@ -4,6 +4,8 @@ import sys
 import PySide
 from PySide.QtGui import *
 
+from trollbox.image_picker import ImagePicker
+
 class MainWindow(QMainWindow):
     def __init__(self, parent=None):
         QMainWindow.__init__(self, parent)
@@ -17,7 +19,7 @@ class MainWindow(QMainWindow):
         liveCheckBox = QCheckBox("Live", centralWidget)
         copyButton = QPushButton("Copy URL", centralWidget)
         grabButton = QPushButton("Grab FireFox URL", centralWidget)
-        imagePicker = QListView(centralWidget)
+        imagePicker = ImagePicker(centralWidget)
 
         layout = QGridLayout(centralWidget)
         layout.addWidget(imagePicker, 0, 0, 2, 19)

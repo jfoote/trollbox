@@ -1,4 +1,6 @@
 [ 
     ["http://foo.bar", ["tng", "book"], "trollbox/test/data/0/images/book.jpg"], 
-    ["http://foo.baz", ["koop", "postmaster"], "trollbox/test/data/0/images/koop.jpg"] 
+    ["http://foo.baz", ["koop", "postmaster"], "trollbox/test/data/0/images/koop.jpg"],
+    ["http://imgur.fart", ["hardway", "me2u"], "trollbox/test/data/0/images/me2u.jpg"],
+    ["http://doodle.town", ["gg", "bg"], "trollbox/test/data/0/images/gg.jpg"] 
 ]
