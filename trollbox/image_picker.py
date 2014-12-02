@@ -76,8 +76,8 @@ class ImageSearcher(QSortFilterProxyModel):
 class ImagePicker(QListView):
 
     # Signals
-    tagsStringChanged = Signal(str)
-    urlChanged = Signal(str)
+    selectedTagsStringChanged = Signal(str)
+    selectedUrlChanged = Signal(str)
 
     def __init__(self, parent=None, model_path=None):
         QListView.__init__(self, parent)
@@ -114,8 +114,8 @@ class ImagePicker(QListView):
             tags = self.model().data(cur_qmi, ImageModel.TagRole)
             url = self.model().data(cur_qmi, Qt.DisplayRole)
 
-        self.tagsStringChanged.emit(" ".join(tags))
-        self.urlChanged.emit(url)
+        self.selectedTagsStringChanged.emit(" ".join(tags))
+        self.selectedUrlChanged.emit(url)
         print "emitted selectionChanged"
 
     @Slot(QModelIndex, QModelIndex)
@@ -129,10 +129,10 @@ class ImagePicker(QListView):
 
         tags = self.model().data(cur_qmi, ImageModel.TagRole)
         print "emitting"
-        self.tagsStringChanged.emit(" ".join(tags))
+        self.selectedTagsStringChanged.emit(" ".join(tags))
 
         url = self.model().data(cur_qmi, Qt.DisplayRole)
-        self.urlChanged.emit(url)
+        self.selectedUrlChanged.emit(url)
         '''
 
     @Slot(str)
