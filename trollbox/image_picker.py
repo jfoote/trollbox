@@ -79,10 +79,34 @@ class ImagePicker(QListView):
         proxyModel.setSourceModel(imageModel)
         self.setModel(proxyModel)
 
+    @Slot(QItemSelection, QItemSelection)
+    def selectionChanged(self, cur_sel, prev_sel):
+        '''
+        NOTE: Called *after* selection is made
+        '''
+        QListView.selectionChanged(self, cur_sel, prev_sel)
+        '''
+        It seems like using currentChanged to emit signals
+        probably catches more corner cases, but this is left
+        here for reference in case upstream slots need the
+        selection to be set
+
+        cur_qmi = cur_sel.indexes()[0] # only allow 1 item at a time
+
+        tags = self.model().data(cur_qmi, ImageModel.TagRole)
+        self.tagsStringChanged.emit(" ".join(tags))
+
+        url = self.model().data(cur_qmi, Qt.DisplayRole)
+        self.urlChanged.emit(url)
+
+        print "index", self.selectedIndexes()
+        '''
+
     @Slot(QModelIndex, QModelIndex)
     def currentChanged(self, cur_qmi, prev_qmi):
         '''
         Does default stuff + emits signals
+        NOTE: Called *before* selection is changed
         '''
         QListView.currentChanged(self, cur_qmi, prev_qmi)
 
@@ -91,6 +115,17 @@ class ImagePicker(QListView):
 
         url = self.model().data(cur_qmi, Qt.DisplayRole)
         self.urlChanged.emit(url)
+
+    @Slot(str)
+    def setTagsString(self, string):
+        tags = string.split(" ")
+        indexes = self.selectedIndexes()
+        if not indexes:
+            return # no selection
+        qmi = indexes[0] # only allow 1 selection at a time
+        print "qmi", qmi, "tags", tags
+        #self.model().setData(qmi, tags, ImageModel.TagRole)
+
 
     def setFilterTags(self, *args, **kwargs):
         self.model().setFilterTags(*args, **kwargs)

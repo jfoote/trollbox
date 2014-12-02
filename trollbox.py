@@ -37,6 +37,8 @@ class MainWindow(QMainWindow):
         searchEdit.textChanged.connect(urlEdit.clear)
         searchEdit.textChanged.connect(tagEdit.clear)
         searchEdit.textChanged.connect(liveCheckBox.clear)
+        # 3. save changes to edit boxes in model
+        tagEdit.textChanged.connect(imagePicker.setTagsString)
 
         layout = QGridLayout(centralWidget)
         layout.addWidget(imagePicker, 0, 0, 2, 19)
