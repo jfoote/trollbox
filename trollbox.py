@@ -14,12 +14,17 @@ class MainWindow(QMainWindow):
         self.setCentralWidget(centralWidget)
 
         searchEdit = QLineEdit(centralWidget)
+        searchEdit.setPlaceholderText("Search")
         tagEdit = QLineEdit(centralWidget)
+        tagEdit.setPlaceholderText("Current Image Tags")
         urlEdit = QLineEdit(centralWidget)
+        urlEdit.setPlaceholderText("Current Image URL")
         liveCheckBox = QCheckBox("Live", centralWidget)
         copyButton = QPushButton("Copy URL", centralWidget)
         grabButton = QPushButton("Grab FireFox URL", centralWidget)
         imagePicker = ImagePicker(centralWidget)
+
+        searchEdit.textChanged.connect(imagePicker.setFilterTagsString)
 
         layout = QGridLayout(centralWidget)
         layout.addWidget(imagePicker, 0, 0, 2, 19)

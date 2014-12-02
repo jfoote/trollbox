@@ -29,8 +29,15 @@ class ImageSearcher(QSortFilterProxyModel):
         '''
         Filters on tags (a list)
         '''
+        tags = [t for t in tags if t]
         self.filter_tags = tags
         self.setFilterRegExp("") # hack: triggers filter logic
+
+    def setFilterTagsString(self, string):
+        '''
+        Filters on tags (a string containing a space-separated list of tags).
+        '''
+        self.setFilterTags(string.split(" "))
 
     def filterAcceptsRow(self, row_index, parent_qmi):
         '''
@@ -69,6 +76,9 @@ class ImagePicker(QListView):
 
     def setFilterTags(self, *args, **kwargs):
         self.model().setFilterTags(*args, **kwargs)
+
+    def setFilterTagsString(self, *args, **kwargs):
+        self.model().setFilterTagsString(*args, **kwargs)
 
     def sort(self, col=0, order=Qt.DescendingOrder):
         '''
