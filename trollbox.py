@@ -1,8 +1,10 @@
 #!/usr/bin/env python
 
 import sys
+from functools import partial
 import PySide
 from PySide.QtGui import *
+from PySide.QtCore import Slot
 
 from trollbox.image_picker import ImagePicker
 
@@ -19,7 +21,7 @@ class MainWindow(QMainWindow):
         tagEdit.setPlaceholderText("Current Image Tags")
         urlEdit = QLineEdit(centralWidget)
         urlEdit.setPlaceholderText("Current Image URL")
-        liveCheckBox = QCheckBox("Live", centralWidget)
+        liveCheckBox = ClearableCheckBox("Live", centralWidget)
         copyButton = QPushButton("Copy URL", centralWidget)
         grabButton = QPushButton("Grab FireFox URL", centralWidget)
         imagePicker = ImagePicker(centralWidget)
@@ -34,6 +36,7 @@ class MainWindow(QMainWindow):
         # 2. clear selection when searching
         searchEdit.textChanged.connect(urlEdit.clear)
         searchEdit.textChanged.connect(tagEdit.clear)
+        searchEdit.textChanged.connect(liveCheckBox.clear)
 
         layout = QGridLayout(centralWidget)
         layout.addWidget(imagePicker, 0, 0, 2, 19)
@@ -43,6 +46,11 @@ class MainWindow(QMainWindow):
         layout.addWidget(tagEdit, 21, 1)
         layout.addWidget(copyButton, 22, 0)
         layout.addWidget(grabButton, 22, 1)
+
+class ClearableCheckBox(QCheckBox):
+    @Slot()
+    def clear(self):
+        self.setChecked(False)
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
