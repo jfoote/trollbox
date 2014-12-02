@@ -1,5 +1,5 @@
 from PySide.QtGui import *
-from PySide.QtCore import QSize
+from PySide.QtCore import QSize, Qt
 from trollbox.image_model import ImageModel
 
 class ImageSearcher(QSortFilterProxyModel):
@@ -17,7 +17,13 @@ class ImageSearcher(QSortFilterProxyModel):
         If data at left_qmi matches fewer tags than data at right_qmi returns
         True. Returns False otherwise.
         '''
-        pass
+        left_tags = self.sourceModel().data(left_qmi, ImageModel.TagRole)
+        left_int = set(self.filter_tags).intersection(set(left_tags))
+
+        right_tags = self.sourceModel().data(right_qmi, ImageModel.TagRole)
+        right_int = set(self.filter_tags).intersection(set(right_tags))
+
+        return len(left_int) < len(right_int)
 
     def setFilterTags(self, tags):
         '''
@@ -28,7 +34,7 @@ class ImageSearcher(QSortFilterProxyModel):
 
     def filterAcceptsRow(self, row_index, parent_qmi):
         '''
-        If data at row_index contains tags in self.filterRegEx() returns
+        If data at row_index contains *ANY* tags in self.filterRegEx() returns
         True. Returns False otherwise.
         '''
         
@@ -63,3 +69,9 @@ class ImagePicker(QListView):
 
     def setFilterTags(self, *args, **kwargs):
         self.model().setFilterTags(*args, **kwargs)
+
+    def sort(self, col=0, order=Qt.DescendingOrder):
+        '''
+        Sorts in descending order (Qt default is Ascending)
+        '''
+        self.model().sort(col, order)
