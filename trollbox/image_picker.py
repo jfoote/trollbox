@@ -11,6 +11,8 @@ class ImageSearcher(QSortFilterProxyModel):
     def __init__(self, parent=None):
         QSortFilterProxyModel.__init__(self, parent)
         self.filter_tags = []
+        self.filter_url = ""
+        self.setDynamicSortFilter(True)
 
     def lessThan(self, left_qmi, right_qmi):
         '''
@@ -33,6 +35,13 @@ class ImageSearcher(QSortFilterProxyModel):
         self.filter_tags = tags
         self.setFilterRegExp("") # hack: triggers filter logic
 
+    def setFilterUrl(self, url):
+        '''
+        Filters on url
+        '''
+        self.filter_url = url
+        self.setFilterRegExp("") # hack: triggers filter logic
+
     def setFilterTagsString(self, string):
         '''
         Filters on tags (a string containing a space-separated list of tags).
@@ -45,14 +54,18 @@ class ImageSearcher(QSortFilterProxyModel):
         True. Returns False otherwise.
         '''
         
-        # if no tags set, show all images
-        if not self.filter_tags:
-            return True
 
         qmi = self.sourceModel().index(row_index, 0, parent_qmi)
         tags = self.sourceModel().data(qmi, ImageModel.TagRole)
-        intersection  = set(tags).intersection(set(self.filter_tags))
-        return bool(intersection)
+        url = self.sourceModel().data(qmi, Qt.DisplayRole)
+
+        # if no tags set, show all images
+        if self.filter_tags:
+            intersection  = set(tags).intersection(set(self.filter_tags))
+        else:
+            intersection = True
+
+        return bool(intersection) and self.filter_url in url
 
     def filterAcceptsColumn(*args, **kwargs):
         '''
@@ -90,17 +103,20 @@ class ImagePicker(QListView):
         probably catches more corner cases, but this is left
         here for reference in case upstream slots need the
         selection to be set
-
-        cur_qmi = cur_sel.indexes()[0] # only allow 1 item at a time
-
-        tags = self.model().data(cur_qmi, ImageModel.TagRole)
-        self.tagsStringChanged.emit(" ".join(tags))
-
-        url = self.model().data(cur_qmi, Qt.DisplayRole)
-        self.urlChanged.emit(url)
-
-        print "index", self.selectedIndexes()
         '''
+
+        indexes = cur_sel.indexes() 
+        if not indexes: # no selection
+            tags = ""
+            url = ""
+        else:
+            cur_qmi = cur_sel.indexes()[0] # only allow 1 item at a time
+            tags = self.model().data(cur_qmi, ImageModel.TagRole)
+            url = self.model().data(cur_qmi, Qt.DisplayRole)
+
+        self.tagsStringChanged.emit(" ".join(tags))
+        self.urlChanged.emit(url)
+        print "emitted selectionChanged"
 
     @Slot(QModelIndex, QModelIndex)
     def currentChanged(self, cur_qmi, prev_qmi):
@@ -109,12 +125,15 @@ class ImagePicker(QListView):
         NOTE: Called *before* selection is changed
         '''
         QListView.currentChanged(self, cur_qmi, prev_qmi)
+        '''
 
         tags = self.model().data(cur_qmi, ImageModel.TagRole)
+        print "emitting"
         self.tagsStringChanged.emit(" ".join(tags))
 
         url = self.model().data(cur_qmi, Qt.DisplayRole)
         self.urlChanged.emit(url)
+        '''
 
     @Slot(str)
     def setTagsString(self, string):
@@ -124,7 +143,7 @@ class ImagePicker(QListView):
             return # no selection
         qmi = indexes[0] # only allow 1 selection at a time
         print "qmi", qmi, "tags", tags
-        #self.model().setData(qmi, tags, ImageModel.TagRole)
+        self.model().setData(qmi, tags, ImageModel.TagRole)
 
 
     def setFilterTags(self, *args, **kwargs):
@@ -132,6 +151,9 @@ class ImagePicker(QListView):
 
     def setFilterTagsString(self, *args, **kwargs):
         self.model().setFilterTagsString(*args, **kwargs)
+
+    def setFilterUrl(self, *args, **kwargs):
+        self.model().setFilterUrl(*args, **kwargs)
 
     def sort(self, col=0, order=Qt.DescendingOrder):
         '''

@@ -70,6 +70,7 @@ class ImageModel(QAbstractListModel):
         """
         index = qmi.row()
         url, tags, local_path, icon = self.images[index]
+        print "value", value
         if role == Qt.DecorationRole:
             local_path = value
             icon = QIcon(local_path)
@@ -79,3 +80,5 @@ class ImageModel(QAbstractListModel):
             tags = value
         self.images[index] = url, tags, local_path, icon
         self.save()
+        self.dataChanged.emit(qmi, qmi)
+        return True

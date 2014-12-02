@@ -15,39 +15,40 @@ class MainWindow(QMainWindow):
         centralWidget = QWidget(self)
         self.setCentralWidget(centralWidget)
 
-        searchEdit = QLineEdit(centralWidget)
-        searchEdit.setPlaceholderText("Search")
+        tagSearchEdit = QLineEdit(centralWidget)
+        tagSearchEdit.setPlaceholderText("Search by Tag")
+        urlSearchEdit = QLineEdit(centralWidget)
+        urlSearchEdit.setPlaceholderText("Search by URL")
         tagEdit = QLineEdit(centralWidget)
         tagEdit.setPlaceholderText("Current Image Tags")
         urlEdit = QLineEdit(centralWidget)
         urlEdit.setPlaceholderText("Current Image URL")
-        liveCheckBox = ClearableCheckBox("Live", centralWidget)
-        copyButton = QPushButton("Copy URL", centralWidget)
-        grabButton = QPushButton("Grab FireFox URL", centralWidget)
+        liveCheckBox = ClearableCheckBox("Live Tag Search", centralWidget)
+        downloadButton = QPushButton("Get Search URL", centralWidget)
+        deleteButton = QPushButton("Delete Current Image", centralWidget)
         imagePicker = ImagePicker(centralWidget)
 
         # Bind search box to image picker contents
-        searchEdit.textChanged.connect(imagePicker.setFilterTagsString)
+        tagSearchEdit.textChanged.connect(imagePicker.setFilterTagsString)
+        urlSearchEdit.textChanged.connect(imagePicker.setFilterUrl)
 
         # Bind edit boxes to image picker selection
-        # 1. reflect changes in imagePicker in edit boxes
+        # - reflect changes from imagePicker in edit boxes
         imagePicker.tagsStringChanged.connect(tagEdit.setText)
         imagePicker.urlChanged.connect(urlEdit.setText)
-        # 2. clear selection when searching
-        searchEdit.textChanged.connect(urlEdit.clear)
-        searchEdit.textChanged.connect(tagEdit.clear)
-        searchEdit.textChanged.connect(liveCheckBox.clear)
-        # 3. save changes to edit boxes in model
-        tagEdit.textChanged.connect(imagePicker.setTagsString)
+        # - save changes to tag edit box in model
+        tagEdit.textEdited.connect(imagePicker.setTagsString)
+        tagEdit.textEdited.connect(tagSearchEdit.clear)
 
         layout = QGridLayout(centralWidget)
         layout.addWidget(imagePicker, 0, 0, 2, 19)
-        layout.addWidget(searchEdit, 20, 0)
-        layout.addWidget(liveCheckBox, 20, 1)
-        layout.addWidget(urlEdit, 21, 0)
-        layout.addWidget(tagEdit, 21, 1)
-        layout.addWidget(copyButton, 22, 0)
-        layout.addWidget(grabButton, 22, 1)
+        layout.addWidget(urlEdit, 20, 0)
+        layout.addWidget(tagEdit, 20, 1)
+        layout.addWidget(deleteButton, 20, 2)
+        layout.addWidget(tagSearchEdit, 21, 0)
+        layout.addWidget(liveCheckBox, 21, 1)
+        layout.addWidget(urlSearchEdit, 22, 0)
+        layout.addWidget(downloadButton, 22, 1)
 
 class ClearableCheckBox(QCheckBox):
     @Slot()
