@@ -24,7 +24,16 @@ class MainWindow(QMainWindow):
         grabButton = QPushButton("Grab FireFox URL", centralWidget)
         imagePicker = ImagePicker(centralWidget)
 
+        # Bind search box to image picker contents
         searchEdit.textChanged.connect(imagePicker.setFilterTagsString)
+
+        # Bind edit boxes to image picker selection
+        # 1. reflect changes in imagePicker in edit boxes
+        imagePicker.tagsStringChanged.connect(tagEdit.setText)
+        imagePicker.urlChanged.connect(urlEdit.setText)
+        # 2. clear selection when searching
+        searchEdit.textChanged.connect(urlEdit.clear)
+        searchEdit.textChanged.connect(tagEdit.clear)
 
         layout = QGridLayout(centralWidget)
         layout.addWidget(imagePicker, 0, 0, 2, 19)

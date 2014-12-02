@@ -1,5 +1,5 @@
 from PySide.QtGui import *
-from PySide.QtCore import QSize, Qt
+from PySide.QtCore import QSize, Qt, Signal, Slot, QModelIndex
 from trollbox.image_model import ImageModel
 
 class ImageSearcher(QSortFilterProxyModel):
@@ -61,6 +61,11 @@ class ImageSearcher(QSortFilterProxyModel):
         return True
 
 class ImagePicker(QListView):
+
+    # Signals
+    tagsStringChanged = Signal(str)
+    urlChanged = Signal(str)
+
     def __init__(self, parent=None, model_path=None):
         QListView.__init__(self, parent)
 
@@ -73,6 +78,19 @@ class ImagePicker(QListView):
         proxyModel = ImageSearcher(parent)
         proxyModel.setSourceModel(imageModel)
         self.setModel(proxyModel)
+
+    @Slot(QModelIndex, QModelIndex)
+    def currentChanged(self, cur_qmi, prev_qmi):
+        '''
+        Does default stuff + emits signals
+        '''
+        QListView.currentChanged(self, cur_qmi, prev_qmi)
+
+        tags = self.model().data(cur_qmi, ImageModel.TagRole)
+        self.tagsStringChanged.emit(" ".join(tags))
+
+        url = self.model().data(cur_qmi, Qt.DisplayRole)
+        self.urlChanged.emit(url)
 
     def setFilterTags(self, *args, **kwargs):
         self.model().setFilterTags(*args, **kwargs)
