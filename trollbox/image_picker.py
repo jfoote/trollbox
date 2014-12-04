@@ -53,7 +53,6 @@ class ImageSearcher(QSortFilterProxyModel):
         If data at row_index contains *ANY* tags in self.filterRegEx() returns
         True. Returns False otherwise.
         '''
-        
 
         qmi = self.sourceModel().index(row_index, 0, parent_qmi)
         tags = self.sourceModel().data(qmi, ImageModel.TagRole)
@@ -144,7 +143,6 @@ class ImagePicker(QListView):
         qmi = indexes[0] # only allow 1 selection at a time
         print "qmi", qmi, "tags", tags
         self.model().setData(qmi, tags, ImageModel.TagRole)
-
 
     def setFilterTags(self, *args, **kwargs):
         self.model().setFilterTags(*args, **kwargs)

@@ -20,13 +20,16 @@ class MainWindow(QMainWindow):
         self.tagEdit.setPlaceholderText("Current Image Tags")
         self.urlEdit = QLineEdit(centralWidget)
         self.urlEdit.setPlaceholderText("Current Image URL")
+        self.urlEdit.setDisabled(True)
         saveButton = QPushButton("Save Selection", centralWidget)
+        saveButton.clicked.connect(self.saveTags)
+        self.tagEdit.returnPressed.connect(saveButton.clicked)
         deleteButton = QPushButton("Delete Selection", centralWidget)
 
         searchEdit = QLineEdit(centralWidget)
         searchEdit.setPlaceholderText("Image Tag Search")
         liveCheckBox = ClearableCheckBox("Keylogger Search", centralWidget)
-        imagePicker = ImagePicker(centralWidget)
+        self.imagePicker = ImagePicker(centralWidget)
 
         getUrlEdit = QLineEdit(centralWidget)
         getUrlEdit.setPlaceholderText("Download Image URL")
@@ -34,7 +37,7 @@ class MainWindow(QMainWindow):
 
         # Set layout
         layout = QGridLayout(centralWidget)
-        layout.addWidget(imagePicker, 0, 0, 4, 19)
+        layout.addWidget(self.imagePicker, 0, 0, 4, 19)
         selectionBox = QVBoxLayout()
         selectionBox.addWidget(self.urlEdit)
         selectionBox.addWidget(self.tagEdit)
@@ -47,16 +50,14 @@ class MainWindow(QMainWindow):
         layout.addWidget(getUrlButton, 6, 1)
 
         # Let user search by tag and URL
-        #self.tagEdit.textChanged.connect(imagePicker.setFilterTagsString)
-        #self.urlEdit.textChanged.connect(imagePicker.setFilterUrl)
+        searchEdit.textChanged.connect(self.imagePicker.setFilterTagsString)
 
-        # When user picks an image, filter out others
-        #imagePicker.selectedTagsStringChanged.connect(self.tagEdit.setText)
-        #imagePicker.selectedUrlChanged.connect(self.urlEdit.setText)
+        # Reflect selection in tags and URL boxes
+        self.imagePicker.selectedTagsStringChanged.connect(self.tagEdit.setText)
+        self.imagePicker.selectedUrlChanged.connect(self.urlEdit.setText)
 
-        # - save changes to tag edit box in model
-        #self.tagEdit.textEdited.connect(imagePicker.setTagsString)
-        #self.tagEdit.textEdited.connect(tagSearchEdit.clear)
+    def saveTags(self):
+        self.imagePicker.setTagsString(self.tagEdit.text())
 
 class ClearableCheckBox(QCheckBox):
     @Slot()
