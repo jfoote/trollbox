@@ -117,6 +117,14 @@ class ImagePicker(QListView):
         self.selectedUrlChanged.emit(url)
         print "emitted selectionChanged"
 
+    def deleteSelected(self):
+        indexes = cur_sel.indexes() 
+        if not indexes: # no selection
+            return
+        cur_qmi = cur_sel.indexes()[0] # only allow 1 item at a time
+        self.model().deleteImage(cur_qmi)
+        print "deleted"
+
     @Slot(QModelIndex, QModelIndex)
     def currentChanged(self, cur_qmi, prev_qmi):
         '''

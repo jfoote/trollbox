@@ -85,4 +85,28 @@ class Test_ImageModel(TestCase):
         finally:
             subprocess.call(["rm", "-rf", temp_dir])
 
+    def test_delete(self):
+
+        # copy "0" test troll box to temp dir, delete from it
+        file_dir = os.path.dirname(os.path.realpath(__file__))
+        data_path = os.path.join(file_dir, "data", "0")
+        temp_dir = tempfile.mkdtemp()
+        temp_model_dir = os.path.join(temp_dir, "0")
+        sample_path = os.path.join(temp_model_dir, "images", "book.jpg")
+        try:
+            print data_path, temp_dir, sample_path
+            subprocess.check_call(["cp", "-R", data_path, temp_dir])
+            model = ImageModel(troll_dir=temp_model_dir)
+            self.assertEqual(model.data(model.index(0, 0), Qt.DisplayRole), "http://foo.bar")
+            print subprocess.check_output(["file", sample_path])
+            self.assertTrue(os.path.exists(sample_path))
+
+            # make sure image has been removed from model and file is removed from disk
+            model.deleteImage(model.index(0,0))
+            self.assertEqual(model.data(model.index(0, 0), Qt.DisplayRole), "http://foo.baz")
+            self.assertFalse(os.path.exists(sample_path))
+
+        finally:
+            subprocess.call(["rm", "-rf", temp_dir])
+
 

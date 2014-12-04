@@ -22,8 +22,6 @@ class MainWindow(QMainWindow):
         self.urlEdit.setPlaceholderText("Current Image URL")
         self.urlEdit.setDisabled(True)
         saveButton = QPushButton("Save Selection", centralWidget)
-        saveButton.clicked.connect(self.saveTags)
-        self.tagEdit.returnPressed.connect(saveButton.clicked)
         deleteButton = QPushButton("Delete Selection", centralWidget)
 
         searchEdit = QLineEdit(centralWidget)
@@ -55,6 +53,13 @@ class MainWindow(QMainWindow):
         # Reflect selection in tags and URL boxes
         self.imagePicker.selectedTagsStringChanged.connect(self.tagEdit.setText)
         self.imagePicker.selectedUrlChanged.connect(self.urlEdit.setText)
+
+        # Enabling saving changes of tags to model
+        saveButton.clicked.connect(self.saveTags)
+        self.tagEdit.returnPressed.connect(saveButton.clicked)
+
+        # Enable deleting selections from model
+        deleteButton.clicked.connect(imagePicker.deleteSelected)
 
     def saveTags(self):
         self.imagePicker.setTagsString(self.tagEdit.text())

@@ -22,7 +22,8 @@ class ImageModel(QAbstractListModel):
 
         self.images = []
         for url, tags, local_path in metadata:
-            self.images.append((url, tags, local_path, QIcon(local_path)))
+            abs_path = os.path.join(self.troll_dir, local_path)
+            self.images.append((url, tags, local_path, abs_path, QIcon(local_path)))
 
     def image_dir(self):
         return os.path.join(self.troll_dir, "images")
@@ -42,10 +43,11 @@ class ImageModel(QAbstractListModel):
     def addImage(self, url, tags, local_path):
         '''
         Adds an image with url and tags that has already been downloaded
-        to local_path to the model.
+        to local_path (relative to troll_dir) to the model.
         '''
-        icon = QIcon(local_path)
-        self.images.append((url, tags, local_path, icon))
+        abs_path = os.path.join(self.troll_dir, local_path)
+        icon = QIcon(abs_path)
+        self.images.append((url, tags, local_path, abs_path, icon))
         self.save()
 
     def save(self):
@@ -56,7 +58,7 @@ class ImageModel(QAbstractListModel):
         Returns the image data for role stored at index
         """
         index = qmi.row()
-        url, tags, local_path, icon = self.images[index]
+        url, tags, local_path, abs_path, icon = self.images[index]
         if role == Qt.DecorationRole:
             return icon
         elif role == Qt.DisplayRole:
@@ -64,21 +66,26 @@ class ImageModel(QAbstractListModel):
         elif role == self.TagRole:
             return tags
 
+    def deleteImage(self, qmi):
+        row = qmi.row()
+        self.beginRemoveRows(qmi, row, row)
+        _, _, local_path, abs_path, _ = self.images[row]
+        del self.images[row]
+        os.remove(abs_path)
+        self.endRemoveRows()
+
     def setData(self, qmi, value, role=Qt.DisplayRole):
         """
         Sets the role data for image stored at index to value
         """
         index = qmi.row()
-        url, tags, local_path, icon = self.images[index]
+        url, tags, local_path, abs_path, icon = self.images[index]
         print "value", value
-        if role == Qt.DecorationRole:
-            local_path = value
-            icon = QIcon(local_path)
-        elif role == Qt.DisplayRole:
+        if role == Qt.DisplayRole:
             url = value
         elif role == self.TagRole:
             tags = value
-        self.images[index] = url, tags, local_path, icon
+        self.images[index] = url, tags, local_path, abs_path, icon
         self.save()
         self.dataChanged.emit(qmi, qmi)
         return True
