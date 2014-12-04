@@ -72,6 +72,12 @@ class ImageSearcher(QSortFilterProxyModel):
         '''
         return True
 
+    def deleteImage(self, qmi):
+        row = qmi.row()
+        self.beginRemoveRows(qmi, row, row)
+        self.sourceModel().deleteImage(qmi)
+        self.endRemoveRows()
+
 class ImagePicker(QListView):
 
     # Signals
@@ -118,10 +124,10 @@ class ImagePicker(QListView):
         print "emitted selectionChanged"
 
     def deleteSelected(self):
-        indexes = cur_sel.indexes() 
+        indexes = self.selectedIndexes() 
         if not indexes: # no selection
             return
-        cur_qmi = cur_sel.indexes()[0] # only allow 1 item at a time
+        cur_qmi = indexes[0] # only allow 1 item at a time
         self.model().deleteImage(cur_qmi)
         print "deleted"
 

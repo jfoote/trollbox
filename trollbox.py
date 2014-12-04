@@ -59,7 +59,7 @@ class MainWindow(QMainWindow):
         self.tagEdit.returnPressed.connect(saveButton.clicked)
 
         # Enable deleting selections from model
-        deleteButton.clicked.connect(imagePicker.deleteSelected)
+        deleteButton.clicked.connect(self.imagePicker.deleteSelected)
 
     def saveTags(self):
         self.imagePicker.setTagsString(self.tagEdit.text())

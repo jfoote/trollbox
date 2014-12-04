@@ -23,7 +23,7 @@ class ImageModel(QAbstractListModel):
         self.images = []
         for url, tags, local_path in metadata:
             abs_path = os.path.join(self.troll_dir, local_path)
-            self.images.append((url, tags, local_path, abs_path, QIcon(local_path)))
+            self.images.append((url, tags, local_path, abs_path, QIcon(abs_path)))
 
     def image_dir(self):
         return os.path.join(self.troll_dir, "images")
@@ -71,6 +71,7 @@ class ImageModel(QAbstractListModel):
         self.beginRemoveRows(qmi, row, row)
         _, _, local_path, abs_path, _ = self.images[row]
         del self.images[row]
+        self.save()
         os.remove(abs_path)
         self.endRemoveRows()
 
