@@ -1,4 +1,4 @@
-import os, json
+import os, json, hashlib
 
 from PySide.QtCore import QAbstractListModel, QModelIndex, Qt
 from PySide.QtGui import QIcon
@@ -28,8 +28,9 @@ class ImageModel(QAbstractListModel):
     def image_dir(self):
         return os.path.join(self.troll_dir, "images")
 
-    def image_path(self, filename):
-        return os.path.join(self.image_dir(), filename)
+    def image_path(self, url):
+        print "path is", os.path.join(self.image_dir(), hashlib.md5(url).hexdigest())
+        return os.path.join(self.image_dir(), hashlib.md5(url).hexdigest())
 
     def rowCount(self, parent_qmi=None):
         if parent_qmi != None:

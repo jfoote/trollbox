@@ -7,6 +7,7 @@ from PySide.QtGui import *
 from PySide.QtCore import Slot
 
 from trollbox.image_picker import ImagePicker
+from trollbox.image_downloader import ImageDownloader
 
 class MainWindow(QMainWindow):
     def __init__(self, parent=None):
@@ -29,8 +30,8 @@ class MainWindow(QMainWindow):
         liveCheckBox = ClearableCheckBox("Keylogger Search", centralWidget)
         self.imagePicker = ImagePicker(centralWidget)
 
-        getUrlEdit = QLineEdit(centralWidget)
-        getUrlEdit.setPlaceholderText("Download Image URL")
+        self.getUrlEdit = QLineEdit(centralWidget)
+        self.getUrlEdit.setPlaceholderText("Download Image URL")
         getUrlButton = QPushButton("Get URL", centralWidget)
 
         # Set layout
@@ -44,7 +45,7 @@ class MainWindow(QMainWindow):
         layout.addLayout(selectionBox, 0, 20)
         layout.addWidget(searchEdit, 5, 0)
         layout.addWidget(liveCheckBox, 5, 1)
-        layout.addWidget(getUrlEdit, 6, 0)
+        layout.addWidget(self.getUrlEdit, 6, 0)
         layout.addWidget(getUrlButton, 6, 1)
 
         # Let user search by tag and URL
@@ -61,6 +62,23 @@ class MainWindow(QMainWindow):
         # Enable deleting selections from model
         deleteButton.clicked.connect(self.imagePicker.deleteSelected)
 
+        # Set up image downloading
+        getUrlButton.clicked.connect(self.downloadImage)
+
+        self.getUrlEdit.setText("http://www.baldhiker.com/wp-content/uploads/world.jpg") # TODO: delete
+
+    def downloadImage(self):
+        downloader = ImageDownloader(self)
+        downloader.failure.connect(self.showDownloadError)
+        url = self.getUrlEdit.text()
+        print "downloading from ", url
+        downloader.get(url, self.imagePicker.getLocalFilepath(url))
+
+    def showDownloadError(self, message):
+        mb = QMessageBox()
+        mb.setText(message)
+        mb.exec_()
+        
     def saveTags(self):
         self.imagePicker.setTagsString(self.tagEdit.text())
 

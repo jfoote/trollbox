@@ -78,6 +78,12 @@ class ImageSearcher(QSortFilterProxyModel):
         self.sourceModel().deleteImage(qmi)
         self.endRemoveRows()
 
+    def getLocalFilepath(self, url):
+        '''
+        Gets local file path to store image at URL at.
+        '''
+        return self.sourceModel().image_path(url)
+
 class ImagePicker(QListView):
 
     # Signals
@@ -172,3 +178,9 @@ class ImagePicker(QListView):
         Sorts in descending order (Qt default is Ascending)
         '''
         self.model().sort(col, order)
+
+    def getLocalFilepath(self, url):
+        '''
+        Gets local file path to store image at URL at.
+        '''
+        return self.model().getLocalFilepath(url)
