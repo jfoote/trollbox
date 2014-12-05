@@ -70,8 +70,8 @@ class MainWindow(QMainWindow):
     def downloadImage(self):
         downloader = ImageDownloader(self)
         downloader.failure.connect(self.showDownloadError)
+        downloader.success.connect(self.imagePicker.addImage)
         url = self.getUrlEdit.text()
-        print "downloading from ", url
         downloader.get(url, self.imagePicker.getLocalFilepath(url))
 
     def showDownloadError(self, message):

@@ -1,10 +1,11 @@
 import os, json, hashlib
 
-from PySide.QtCore import QAbstractListModel, QModelIndex, Qt
+from PySide.QtCore import QAbstractListModel, QModelIndex, Qt, Signal
 from PySide.QtGui import QIcon
 
 class ImageModel(QAbstractListModel):
     TagRole = 0x101
+    imageAdded = Signal(QModelIndex)
     
     def __init__(self, parent=None, troll_dir=None):
         QAbstractListModel.__init__(self, parent)
@@ -46,10 +47,19 @@ class ImageModel(QAbstractListModel):
         Adds an image with url and tags that has already been downloaded
         to local_path (relative to troll_dir) to the model.
         '''
+        ct = self.rowCount()
+        qmi = self.index(ct)
+        print "addImage qmi", qmi
+        self.beginInsertRows(qmi, ct, ct)
+
         abs_path = os.path.join(self.troll_dir, local_path)
         icon = QIcon(abs_path)
         self.images.append((url, tags, local_path, abs_path, icon))
         self.save()
+        
+        self.endInsertRows()
+        #self.imageAdded.emit(self.index(self.rowCount() - 1))
+        self.imageAdded.emit(self.createIndex(self.rowCount() - 1, 0))
 
     def save(self):
         json.dump([t[:3] for t in self.images], open(self.metadata_path, "wt"))

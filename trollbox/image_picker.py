@@ -84,6 +84,12 @@ class ImageSearcher(QSortFilterProxyModel):
         '''
         return self.sourceModel().image_path(url)
 
+    def addImage(self, url, local_path):
+        '''
+        Adds image at (absolute) local_path to model.
+        '''
+        return self.sourceModel().addImage(url, [], local_path)
+
 class ImagePicker(QListView):
 
     # Signals
@@ -102,6 +108,16 @@ class ImagePicker(QListView):
         proxyModel = ImageSearcher(parent)
         proxyModel.setSourceModel(imageModel)
         self.setModel(proxyModel)
+
+        imageModel.imageAdded.connect(self.handleImageAdded)
+
+    def handleImageAdded(self, qmi):
+        '''
+        Clears the current search and selects the new image
+        '''
+        print "handleImageAdded", qmi
+        self.setFilterTagsString("")
+        self.setCurrentIndex(qmi)
 
     @Slot(QItemSelection, QItemSelection)
     def selectionChanged(self, cur_sel, prev_sel):
@@ -184,3 +200,9 @@ class ImagePicker(QListView):
         Gets local file path to store image at URL at.
         '''
         return self.model().getLocalFilepath(url)
+
+    def addImage(self, url, local_path):
+        '''
+        Adds image at (absolute) local_path to model.
+        '''
+        return self.model().addImage(url, local_path)
