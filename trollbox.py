@@ -25,8 +25,8 @@ class MainWindow(QMainWindow):
         saveButton = QPushButton("Save Selection", centralWidget)
         deleteButton = QPushButton("Delete Selection", centralWidget)
 
-        searchEdit = QLineEdit(centralWidget)
-        searchEdit.setPlaceholderText("Image Tag Search")
+        self.searchEdit = QLineEdit(centralWidget)
+        self.searchEdit.setPlaceholderText("Image Tag Search")
         liveCheckBox = ClearableCheckBox("Keylogger Search", centralWidget)
         self.imagePicker = ImagePicker(centralWidget)
 
@@ -43,13 +43,13 @@ class MainWindow(QMainWindow):
         selectionBox.addWidget(saveButton)
         selectionBox.addWidget(deleteButton)
         layout.addLayout(selectionBox, 0, 20)
-        layout.addWidget(searchEdit, 5, 0)
+        layout.addWidget(self.searchEdit, 5, 0)
         layout.addWidget(liveCheckBox, 5, 1)
         layout.addWidget(self.getUrlEdit, 6, 0)
         layout.addWidget(getUrlButton, 6, 1)
 
         # Let user search by tag and URL
-        searchEdit.textChanged.connect(self.imagePicker.setFilterTagsString)
+        self.searchEdit.textChanged.connect(self.imagePicker.setFilterTagsString)
 
         # Reflect selection in tags and URL boxes
         self.imagePicker.selectedTagsStringChanged.connect(self.tagEdit.setText)
@@ -61,16 +61,20 @@ class MainWindow(QMainWindow):
 
         # Enable deleting selections from model
         deleteButton.clicked.connect(self.imagePicker.deleteSelected)
+        self.imagePicker.preDelete.connect(self.tagEdit.clear)
+        self.imagePicker.preDelete.connect(self.urlEdit.clear)
+        #self.imagePicker.preDelete.connect(self.searchEdit.clear)
 
         # Set up image downloading
         getUrlButton.clicked.connect(self.downloadImage)
 
-        self.getUrlEdit.setText("http://www.baldhiker.com/wp-content/uploads/world.jpg") # TODO: delete
+        self.getUrlEdit.setText("http://i1.kym-cdn.com/photos/images/facebook/000/390/538/deb.jpg")
 
     def downloadImage(self):
         downloader = ImageDownloader(self)
         downloader.failure.connect(self.showDownloadError)
         downloader.success.connect(self.imagePicker.addImage)
+        downloader.success.connect(self.searchEdit.clear)
         url = self.getUrlEdit.text()
         downloader.get(url, self.imagePicker.getLocalFilepath(url))
 

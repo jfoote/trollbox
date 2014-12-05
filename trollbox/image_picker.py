@@ -95,6 +95,7 @@ class ImagePicker(QListView):
     # Signals
     selectedTagsStringChanged = Signal(str)
     selectedUrlChanged = Signal(str)
+    preDelete = Signal()
 
     def __init__(self, parent=None, model_path=None):
         QListView.__init__(self, parent)
@@ -103,6 +104,7 @@ class ImagePicker(QListView):
         self.setDragEnabled(False)
         self.setAcceptDrops(False)
         self.setIconSize(QSize(150,150))
+        self.setSelectionMode(self.SingleSelection)
 
         imageModel = ImageModel(parent, model_path)
         proxyModel = ImageSearcher(parent)
@@ -110,14 +112,18 @@ class ImagePicker(QListView):
         self.setModel(proxyModel)
 
         imageModel.imageAdded.connect(self.handleImageAdded)
+        imageModel.rowsAboutToBeRemoved.connect(self.handlePreDelete)
 
-    def handleImageAdded(self, qmi):
+    def handleImageAdded(self, modelRow):
         '''
         Clears the current search and selects the new image
         '''
-        print "handleImageAdded", qmi
         self.setFilterTagsString("")
-        self.setCurrentIndex(qmi)
+        print self.model().rowCount()
+        qmi = self.model().index(self.model().rowCount()-1, 0)
+        print "handleImageAdded", qmi
+        self.selectionModel().select(qmi, self.selectionModel().ClearAndSelect)
+        self.scrollTo(qmi)
 
     @Slot(QItemSelection, QItemSelection)
     def selectionChanged(self, cur_sel, prev_sel):
@@ -150,8 +156,15 @@ class ImagePicker(QListView):
         if not indexes: # no selection
             return
         cur_qmi = indexes[0] # only allow 1 item at a time
+        print "deleting", self.model().data(cur_qmi)
+        row = cur_qmi.row()
+        #TODO: BUG! i need the qmi from the underlying model, not the proxy model -- this 
+        # is broken when deleting from a search
         self.model().deleteImage(cur_qmi)
         print "deleted"
+
+    def handlePreDelete(self, qmi, first, last):
+        self.preDelete.emit()
 
     @Slot(QModelIndex, QModelIndex)
     def currentChanged(self, cur_qmi, prev_qmi):

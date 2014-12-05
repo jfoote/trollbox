@@ -5,7 +5,8 @@ from PySide.QtGui import QIcon
 
 class ImageModel(QAbstractListModel):
     TagRole = 0x101
-    imageAdded = Signal(QModelIndex)
+    #imageAdded = Signal(QModelIndex)
+    imageAdded = Signal(int)
     
     def __init__(self, parent=None, troll_dir=None):
         QAbstractListModel.__init__(self, parent)
@@ -59,7 +60,8 @@ class ImageModel(QAbstractListModel):
         
         self.endInsertRows()
         #self.imageAdded.emit(self.index(self.rowCount() - 1))
-        self.imageAdded.emit(self.createIndex(self.rowCount() - 1, 0))
+        #self.imageAdded.emit(self.createIndex(self.rowCount() - 1, 0))
+        self.imageAdded.emit(self.rowCount() - 1)
 
     def save(self):
         json.dump([t[:3] for t in self.images], open(self.metadata_path, "wt"))
@@ -83,7 +85,10 @@ class ImageModel(QAbstractListModel):
         _, _, local_path, abs_path, _ = self.images[row]
         del self.images[row]
         self.save()
-        os.remove(abs_path)
+        try:
+            os.remove(abs_path)
+        except OSError as e:
+            print str(e)
         self.endRemoveRows()
 
     def setData(self, qmi, value, role=Qt.DisplayRole):
