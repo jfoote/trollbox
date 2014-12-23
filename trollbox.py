@@ -34,34 +34,40 @@ class MainWindow(QMainWindow):
 
         self.getUrlEdit = QLineEdit(centralWidget)
         self.getUrlEdit.setPlaceholderText("Download Image URL")
-        self.getUrlButton = QPushButton("Get URL", centralWidget)
+        self.getUrlButton = QPushButton("Download URL", centralWidget)
+        self.pasteUrlButton = QPushButton("Paste to URL", centralWidget)
 
         # Set layout
         layout = QGridLayout(centralWidget)
-        layout.addWidget(self.imagePicker, 0, 0, 4, 19)
+        layout.addWidget(self.imagePicker, 0, 0, 3, 3)
+        layout.setColumnStretch(0, 1)
+        layout.setColumnStretch(1, 1)
+        layout.setColumnStretch(2, 1)
 
         selectionBox = QVBoxLayout()
         selectionBox.addWidget(self.urlEdit)
         selectionBox.addWidget(self.tagEdit)
         selectionBox.addWidget(saveButton)
         selectionBox.addWidget(deleteButton)
-        layout.addLayout(selectionBox, 0, 20)
+        layout.addLayout(selectionBox, 0, 3, 1, 1)
 
         #searchBox = QHBoxLayout()
         #searchBox.addWidget(self.searchEdit)
         #searchBox.addWidget(self.clearSearchButton)
         #searchBox.addWidget(self.liveCheckBox)
-        layout.addWidget(self.searchEdit, 5, 0)
-        layout.addWidget(self.liveCheckBox, 5, 2)
-        layout.addWidget(self.clearSearchButton, 5, 1)
-        #layout.addLayout(searchBox, 5, 0)
+        layout.addWidget(self.searchEdit, 5, 0, 1, 2)
+        layout.addWidget(self.liveCheckBox, 5, 2, 1, 1)
+        layout.addWidget(self.clearSearchButton, 5, 3, 1, 1)
+        #layout.addLayout(searchBox, 5, 0, 1, 2)
 
         #urlBox = QHBoxLayout()
         #urlBox.addWidget(self.getUrlEdit)
         #urlBox.addWidget(self.getUrlButton)
+        #urlBox.addWidget(self.pasteUrlButton)
         layout.addWidget(self.getUrlEdit, 6, 0, 1, 2)
-        layout.addWidget(self.getUrlButton, 6, 2)
-        #layout.addLayout(urlBox, 6, 0)
+        layout.addWidget(self.getUrlButton, 6, 2, 1, 1)
+        layout.addWidget(self.pasteUrlButton, 6, 3, 1, 1)
+        #layout.addLayout(urlBox, 6, 0, 1, 2)
 
         # Let user search by tag 
         self.searchEdit.textChanged.connect(self.imagePicker.setFilterTagsString)
@@ -83,8 +89,9 @@ class MainWindow(QMainWindow):
 
         # Set up image downloading
         self.getUrlButton.clicked.connect(self.downloadImage)
+        self.pasteUrlButton.clicked.connect(self.pasteUrl)
 
-        self.getUrlEdit.setText("http://i1.kym-cdn.com/photos/images/facebook/000/390/538/deb.jpg")
+        self.getUrlEdit.setText("https://avatars3.githubusercontent.com/u/2072203?v=3&s=460")
 
         # Enable wordlogging support
         self.wordlogger = get_wordlogger()
@@ -105,6 +112,14 @@ class MainWindow(QMainWindow):
             print "copied URL to clipboard:", url
             self.statusBar().showMessage("Copied '%s'" % url)
 
+    def pasteUrl(self):
+        data = QApplication.clipboard().mimeData()
+        if data.hasText():
+            self.getUrlEdit.setText(data.text())
+        else:
+            self.statusBar().showMessage("Paste URL: No text on clipboard")
+            print "Paste URL: No text on clipboard"
+
     def toggleWordLogging(self, new_state):
         if (new_state == Qt.Checked) and not self.wordlogger.is_active():
             # clicking into UI elements disables live search 
@@ -113,6 +128,7 @@ class MainWindow(QMainWindow):
             self.tagEdit.textEdited.connect(self.liveCheckBox.clear)
             self.getUrlEdit.textEdited.connect(self.liveCheckBox.clear)
             self.getUrlButton.clicked.connect(self.liveCheckBox.clear)
+            self.pasteUrlButton.clicked.connect(self.liveCheckBox.clear)
             self.imagePicker.clicked.connect(self.liveCheckBox.clear)
 
             # start word logger thread
@@ -129,6 +145,7 @@ class MainWindow(QMainWindow):
             self.tagEdit.textEdited.disconnect(self.liveCheckBox.clear)
             self.getUrlEdit.textEdited.disconnect(self.liveCheckBox.clear)
             self.getUrlButton.clicked.disconnect(self.liveCheckBox.clear)
+            self.pasteUrlButton.clicked.disconnect(self.liveCheckBox.clear)
             self.imagePicker.clicked.disconnect(self.liveCheckBox.clear)
 
     def downloadImage(self):
