@@ -8,7 +8,7 @@ from PySide.QtCore import Slot, Qt
 
 from trollbox.image_picker import ImagePicker
 from trollbox.image_downloader import ImageDownloader
-from trollbox.keylogger import get_wordlogger
+from trollbox.wordlogger import get_wordlogger
 
 class MainWindow(QMainWindow):
     def __init__(self, parent=None):
@@ -28,7 +28,7 @@ class MainWindow(QMainWindow):
 
         self.searchEdit = QLineEdit(centralWidget)
         self.searchEdit.setPlaceholderText("Image Tag Search")
-        self.liveCheckBox = ClearableCheckBox("Keylogger Search", centralWidget)
+        self.liveCheckBox = ClearableCheckBox("Wordlogger Search", centralWidget)
         self.imagePicker = ImagePicker(centralWidget)
 
         self.getUrlEdit = QLineEdit(centralWidget)
@@ -71,7 +71,7 @@ class MainWindow(QMainWindow):
 
         self.getUrlEdit.setText("http://i1.kym-cdn.com/photos/images/facebook/000/390/538/deb.jpg")
 
-        # Enable keylogging support
+        # Enable wordlogging support
         self.wordlogger = get_wordlogger()
         self.liveCheckBox.stateChanged.connect(self.toggleWordLogging)
 
