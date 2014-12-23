@@ -7,6 +7,10 @@ def get_wordlogger():
     return WordLogger()
 
 class WordLogger(QObject):
+    '''
+    Emits wordEntered when a word has been detected. Requires root because
+    it's a keylogger. Use with caution.
+    '''
     wordEntered = Signal(str)
 
     def __init__(self, *args, **kwargs):
@@ -38,6 +42,8 @@ class WordLogger(QObject):
         self._stop.set()
 
     def log_keys(self):
+        # known issue: key combos result in extra letters on words
+        # ... but NP, doesn't have to be perfect.
         print "log_keys entered"
         word = ""
         path = os.path.join(self.bin_dir, "osx")
@@ -46,14 +52,20 @@ class WordLogger(QObject):
         self.proc = subprocess.Popen(shlex.split(cmd), stdout=subprocess.PIPE)
         while not self._stop.is_set():
             key = self.proc.stdout.readline().strip() # osx: proc killed upon CTRL-C
-            print "got key '%s'" % key
-            if key == "<Return>":
-                print "got word", word
-                self.wordEntered.emit(word)
-                word = ""
-                continue
+            #print "got key '%s'" % key
+            if key == "<Delete>":
+                # some minor support for typos
+                if len(word) > 1:
+                    word = word[:-1]
+            elif len(key) > 1: # some other non-keystroke
+                word = filter(str.isalnum, word)
+                if len(word) > 0:
+                    print "got word", word
+                    self.wordEntered.emit(word.strip())
+                    word = ""
             elif key == '': # proc exited/EOF
                 break
-            word += key
+            else:
+                word += key
         print "keylogger exiting"
         self.proc.kill() # not necessary on osx
