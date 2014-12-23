@@ -4,6 +4,11 @@ from trollbox.image_model import ImageModel
 from trollbox.image_searcher import ImageSearcher
 
 class ImagePicker(QListView):
+    '''
+    QListView widget used to represent the local image collection. Designed
+    to use a ImageSearcher as a QSortFilterProxyModel and an ImageModel as
+    the underlying model.
+    '''
 
     # Signals
     selectedTagsStringChanged = Signal(str)

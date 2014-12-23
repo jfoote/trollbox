@@ -1,3 +1,13 @@
+/*
+ * Emits strings that correspond to key presses. Requires root to be useful
+ * Dangerous. Use with caution.
+ *
+ * Jonathan Foote
+ * jmfoote@loyola.edu
+ *
+ * see LICENSE.md for license info
+ */
+
 // Compile with:
 // gcc -framework ApplicationServices -o osx osx.c
 //

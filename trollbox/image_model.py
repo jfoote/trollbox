@@ -5,6 +5,10 @@ from PySide.QtCore import QAbstractListModel, QModelIndex, Qt, Signal
 from PySide.QtGui import QIcon
 
 class ImageModel(QAbstractListModel):
+    '''
+    QAbstractListModel that stores images and metadata to a directory on 
+    the file system.
+    '''
     TagRole = 0x101
     UrlRole = 0x102
 

@@ -12,6 +12,9 @@ from trollbox.wordlogger import get_wordlogger
 
 class MainWindow(QMainWindow):
     def __init__(self, parent=None):
+        '''
+        Define widgets, their layout, and signal/slot interactions 
+        '''
         QMainWindow.__init__(self, parent)
         self.resize(800,600)
         centralWidget = QWidget(self)
@@ -41,33 +44,21 @@ class MainWindow(QMainWindow):
         layout = QGridLayout(centralWidget)
         layout.addWidget(self.imagePicker, 0, 0, 3, 5)
 
-        #selectionBox = QVBoxLayout()
         layout.addWidget(QLabel("Selection:"), 5, 0)
         layout.addWidget(self.urlEdit, 5, 1)
         layout.addWidget(self.tagEdit, 5, 2)
         layout.addWidget(saveButton, 5, 3)
         layout.addWidget(deleteButton, 5, 4)
-        #layout.addLayout(selectionBox, 0, 3, 1, 1)
 
-        #searchBox = QHBoxLayout()
-        #searchBox.addWidget(self.searchEdit)
-        #searchBox.addWidget(self.clearSearchButton)
-        #searchBox.addWidget(self.liveCheckBox)
         layout.addWidget(QLabel("Search:"), 6, 0)
         layout.addWidget(self.searchEdit, 6, 1, 1, 2)
         layout.addWidget(self.liveCheckBox, 6, 3, 1, 1)
         layout.addWidget(self.clearSearchButton, 6, 4, 1, 1)
-        #layout.addLayout(searchBox, 5, 0, 1, 2)
 
-        #urlBox = QHBoxLayout()
-        #urlBox.addWidget(self.getUrlEdit)
-        #urlBox.addWidget(self.getUrlButton)
-        #urlBox.addWidget(self.pasteUrlButton)
         layout.addWidget(QLabel("Download:"), 7, 0)
         layout.addWidget(self.getUrlEdit, 7, 1, 1, 2)
         layout.addWidget(self.getUrlButton, 7, 3, 1, 1)
         layout.addWidget(self.pasteUrlButton, 7, 4, 1, 1)
-        #layout.addLayout(urlBox, 6, 0, 1, 2)
 
         # Let user search by tag 
         self.searchEdit.textChanged.connect(self.imagePicker.setFilterTagsString)
@@ -90,8 +81,6 @@ class MainWindow(QMainWindow):
         # Set up image downloading
         self.getUrlButton.clicked.connect(self.downloadImage)
         self.pasteUrlButton.clicked.connect(self.pasteUrl)
-
-        self.getUrlEdit.setText("https://avatars3.githubusercontent.com/u/2072203?v=3&s=460")
 
         # Enable wordlogging support
         self.wordlogger = get_wordlogger()
