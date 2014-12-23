@@ -30,7 +30,17 @@ $ pyside_postinstall.py -install
 
 Run Trollbox from its local directory. Such polished.
 
+```
 $ ./trollbox.py
+```
+
+Or, to enable wordlogging:
+
+```
+$ sudo ./trollbox.py
+```
+
+**Use at your own risk**
 
 ## TODO
 
