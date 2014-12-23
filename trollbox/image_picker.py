@@ -53,12 +53,13 @@ class ImagePicker(QListView):
 
         indexes = cur_sel.indexes() 
         if not indexes: # no selection
+            print "no selection"
             tags = ""
             url = ""
         else:
             cur_qmi = cur_sel.indexes()[0] # only allow 1 item at a time
             tags = self.model().data(cur_qmi, ImageModel.TagRole)
-            url = self.model().data(cur_qmi, Qt.DisplayRole)
+            url = self.model().data(cur_qmi, ImageModel.UrlRole)
 
         self.selectedTagsStringChanged.emit(" ".join(tags))
         self.selectedUrlChanged.emit(url)
@@ -69,7 +70,7 @@ class ImagePicker(QListView):
         if not indexes: # no selection
             return
         cur_qmi = indexes[0] # only allow 1 item at a time
-        print "deleting", self.model().data(cur_qmi)
+        print "deleting", self.model().data(cur_qmi, ImageModel.UrlRole)
         row = cur_qmi.row()
         self.model().deleteImage(cur_qmi) # calls proxy model
         print "deleted"
@@ -90,7 +91,7 @@ class ImagePicker(QListView):
         print "emitting"
         self.selectedTagsStringChanged.emit(" ".join(tags))
 
-        url = self.model().data(cur_qmi, Qt.DisplayRole)
+        url = self.model().data(cur_qmi, ImageModel.UrlRole)
         self.selectedUrlChanged.emit(url)
         '''
 

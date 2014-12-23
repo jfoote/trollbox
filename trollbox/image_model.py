@@ -1,11 +1,13 @@
 import os, json, hashlib
+from urlparse import urlparse, urljoin
 
 from PySide.QtCore import QAbstractListModel, QModelIndex, Qt, Signal
 from PySide.QtGui import QIcon
 
 class ImageModel(QAbstractListModel):
     TagRole = 0x101
-    #imageAdded = Signal(QModelIndex)
+    UrlRole = 0x102
+
     imageAdded = Signal(int)
     
     def __init__(self, parent=None, troll_dir=None):
@@ -26,6 +28,13 @@ class ImageModel(QAbstractListModel):
         for url, tags, local_path in metadata:
             abs_path = os.path.join(self.troll_dir, local_path)
             self.images.append((url, tags, local_path, abs_path, QIcon(abs_path)))
+
+    def short_url(self, url):
+        up = urlparse(url)
+        trimmed = up.netloc
+        if len(trimmed) <= 32:
+            return trimmed
+        return trimmed[:15] + "..." + trimmed[:-18]
 
     def image_dir(self):
         return os.path.join(self.troll_dir, "images")
@@ -90,9 +99,12 @@ class ImageModel(QAbstractListModel):
         """
         index = qmi.row()
         url, tags, local_path, abs_path, icon = self.images[index]
+        short_url = self.short_url(url)
         if role == Qt.DecorationRole:
             return icon
         elif role == Qt.DisplayRole:
+            return short_url
+        elif role == self.UrlRole:
             return url
         elif role == self.TagRole:
             return tags

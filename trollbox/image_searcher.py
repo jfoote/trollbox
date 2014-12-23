@@ -56,7 +56,7 @@ class ImageSearcher(QSortFilterProxyModel):
 
         qmi = self.sourceModel().index(row_index, 0, parent_qmi)
         tags = self.sourceModel().data(qmi, ImageModel.TagRole)
-        url = self.sourceModel().data(qmi, Qt.DisplayRole)
+        url = self.sourceModel().data(qmi, ImageModel.UrlRole)
 
         # if no tags set, show all images
         if self.filter_tags:
@@ -73,7 +73,7 @@ class ImageSearcher(QSortFilterProxyModel):
         return True
 
     def deleteImage(self, qmi):
-        url = self.data(qmi)
+        url = self.data(qmi, ImageModel.UrlRole)
         self.beginRemoveRows(qmi, qmi.row(), qmi.row())
         self.sourceModel().deleteImage(url)
         self.endRemoveRows()
