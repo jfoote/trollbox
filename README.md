@@ -4,7 +4,7 @@ Trollbox enables quick storage, tagging, and retrieval of images from the web.
 
 ![example](https://raw.githubusercontent.com/jfoote/trollbox/master/trollbox/test/data/1/images/example.gif?token=AB-eizPbdrW2ZcP5atUXRQvQMvVYHwl9ks5UoxMYwA%3D%3D)
 
-Trollbox allows users to download, tag, and search for images quickly. The bold can run the app as root to enable instantaneous search via a glorified keylogger (please [understand how this works and the associated risks](https://github.com/jfoote/trollbox/blob/master/trollbox/wordlogger/__init__.py) if you choose to enable it).
+Trollbox allows users to download, tag, and search for images quickly. The bold can run the app as root to enable instantaneous search via a glorified keylogger (please [understand how this works and the associated risks](https://github.com/jfoote/trollbox/blob/master/trollbox/wordlogger/__init__.py) if you choose to enable it). 
 
 ## About
 
@@ -41,6 +41,8 @@ $ sudo ./trollbox.py
 ```
 
 **Use at your own risk**
+
+This app displays (i.e. processes) data from the internet, or any other network you are connected to. Proceed with caution. 
 
 ## TODO
 
