@@ -42,9 +42,11 @@ class WordLogger(QObject):
         self._stop.set()
 
     def log_keys(self):
+        from collections import deque
         # known issue: key combos result in extra letters on words
         # ... but NP, doesn't have to be perfect.
         print "log_keys entered"
+        words = deque(maxlen=3)
         word = ""
         path = os.path.join(self.bin_dir, "osx")
         cmd = path
@@ -61,7 +63,9 @@ class WordLogger(QObject):
                 word = filter(str.isalnum, word)
                 if len(word) > 0:
                     #print "got word", word
-                    self.wordEntered.emit(word.strip())
+                    words.append(word.strip())
+                    #self.wordEntered.emit(word.strip())
+                    self.wordEntered.emit(" ".join(words))
                     word = ""
             elif key == '': # proc exited/EOF
                 break
