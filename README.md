@@ -1,6 +1,6 @@
 # trollbox
 
-Trollbox enables quick storage, tagging, and retrieval of images for the web. 
+Trollbox enables quick storage, tagging, and retrieval of images from the web. 
 
 ![example](https://raw.githubusercontent.com/jfoote/trollbox/master/trollbox/test/data/1/images/example.gif?token=AB-eizPbdrW2ZcP5atUXRQvQMvVYHwl9ks5UoxMYwA%3D%3D)
 
