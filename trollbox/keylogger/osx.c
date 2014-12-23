@@ -133,7 +133,7 @@ static CGEventRef myEventTapCallback (
         return event;
     } else if (type == kCGEventKeyDown) {
         key = CGEventGetIntegerValueField(event, kCGKeyboardEventKeycode);
-        printf("%s", convertKeyCode(key));
+        printf("%s\n", convertKeyCode(key));
     }
     
     fflush(stdout);

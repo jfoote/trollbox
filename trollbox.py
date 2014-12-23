@@ -4,10 +4,11 @@ import sys
 from functools import partial
 import PySide
 from PySide.QtGui import *
-from PySide.QtCore import Slot
+from PySide.QtCore import Slot, Qt
 
 from trollbox.image_picker import ImagePicker
 from trollbox.image_downloader import ImageDownloader
+from trollbox.keylogger import get_wordlogger
 
 class MainWindow(QMainWindow):
     def __init__(self, parent=None):
@@ -27,7 +28,7 @@ class MainWindow(QMainWindow):
 
         self.searchEdit = QLineEdit(centralWidget)
         self.searchEdit.setPlaceholderText("Image Tag Search")
-        liveCheckBox = ClearableCheckBox("Keylogger Search", centralWidget)
+        self.liveCheckBox = ClearableCheckBox("Keylogger Search", centralWidget)
         self.imagePicker = ImagePicker(centralWidget)
 
         self.getUrlEdit = QLineEdit(centralWidget)
@@ -44,7 +45,7 @@ class MainWindow(QMainWindow):
         selectionBox.addWidget(deleteButton)
         layout.addLayout(selectionBox, 0, 20)
         layout.addWidget(self.searchEdit, 5, 0)
-        layout.addWidget(liveCheckBox, 5, 1)
+        layout.addWidget(self.liveCheckBox, 5, 1)
         layout.addWidget(self.getUrlEdit, 6, 0)
         layout.addWidget(getUrlButton, 6, 1)
 
@@ -69,6 +70,16 @@ class MainWindow(QMainWindow):
         getUrlButton.clicked.connect(self.downloadImage)
 
         self.getUrlEdit.setText("http://i1.kym-cdn.com/photos/images/facebook/000/390/538/deb.jpg")
+
+        # Enable keylogging support
+        self.wordlogger = get_wordlogger()
+        self.liveCheckBox.stateChanged.connect(self.toggleWordLogging)
+
+    def toggleWordLogging(self, new_state):
+        if (new_state == Qt.Checked) and not self.wordlogger.is_active():
+            self.wordlogger.start()
+        else:
+            self.wordlogger.stop()
 
     def downloadImage(self):
         downloader = ImageDownloader(self)
