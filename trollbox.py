@@ -35,7 +35,7 @@ class MainWindow(QMainWindow):
         self.getUrlEdit = QLineEdit(centralWidget)
         self.getUrlEdit.setPlaceholderText("Download Image URL")
         self.getUrlButton = QPushButton("Download URL", centralWidget)
-        self.pasteUrlButton = QPushButton("Paste to URL", centralWidget)
+        self.pasteUrlButton = QPushButton("Paste for Download", centralWidget)
 
         # Set layout
         layout = QGridLayout(centralWidget)
