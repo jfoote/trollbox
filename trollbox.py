@@ -28,7 +28,8 @@ class MainWindow(QMainWindow):
 
         self.searchEdit = QLineEdit(centralWidget)
         self.searchEdit.setPlaceholderText("Image Tag Search")
-        self.liveCheckBox = ClearableCheckBox("Wordlogger Search", centralWidget)
+        self.liveCheckBox = ClearableCheckBox("Wordlogger", centralWidget)
+        self.clearSearchButton = QPushButton("Clear/Show All", centralWidget)
         self.imagePicker = ImagePicker(centralWidget)
 
         self.getUrlEdit = QLineEdit(centralWidget)
@@ -38,19 +39,33 @@ class MainWindow(QMainWindow):
         # Set layout
         layout = QGridLayout(centralWidget)
         layout.addWidget(self.imagePicker, 0, 0, 4, 19)
+
         selectionBox = QVBoxLayout()
         selectionBox.addWidget(self.urlEdit)
         selectionBox.addWidget(self.tagEdit)
         selectionBox.addWidget(saveButton)
         selectionBox.addWidget(deleteButton)
         layout.addLayout(selectionBox, 0, 20)
-        layout.addWidget(self.searchEdit, 5, 0)
-        layout.addWidget(self.liveCheckBox, 5, 1)
-        layout.addWidget(self.getUrlEdit, 6, 0)
-        layout.addWidget(self.getUrlButton, 6, 1)
 
-        # Let user search by tag and URL
+        #searchBox = QHBoxLayout()
+        #searchBox.addWidget(self.searchEdit)
+        #searchBox.addWidget(self.clearSearchButton)
+        #searchBox.addWidget(self.liveCheckBox)
+        layout.addWidget(self.searchEdit, 5, 0)
+        layout.addWidget(self.liveCheckBox, 5, 2)
+        layout.addWidget(self.clearSearchButton, 5, 1)
+        #layout.addLayout(searchBox, 5, 0)
+
+        #urlBox = QHBoxLayout()
+        #urlBox.addWidget(self.getUrlEdit)
+        #urlBox.addWidget(self.getUrlButton)
+        layout.addWidget(self.getUrlEdit, 6, 0, 1, 2)
+        layout.addWidget(self.getUrlButton, 6, 2)
+        #layout.addLayout(urlBox, 6, 0)
+
+        # Let user search by tag 
         self.searchEdit.textChanged.connect(self.imagePicker.setFilterTagsString)
+        self.clearSearchButton.clicked.connect(self.clearSearch)
 
         # Reflect selection in tags and URL boxes
         self.imagePicker.selectedTagsStringChanged.connect(self.tagEdit.setText)
@@ -74,6 +89,21 @@ class MainWindow(QMainWindow):
         # Enable wordlogging support
         self.wordlogger = get_wordlogger()
         self.liveCheckBox.stateChanged.connect(self.toggleWordLogging)
+
+        # Enable fast URL copying (this might be annoying)
+        self.imagePicker.clicked.connect(self.copyUrl)
+
+        self.statusBar().showMessage("Click an image to copy its URL")
+
+    def clearSearch(self):
+        self.searchEdit.setText("")
+
+    def copyUrl(self):
+        if self.imagePicker.selectedIndexes():
+            url = self.urlEdit.text()
+            QApplication.clipboard().setText(url)
+            print "copied URL to clipboard:", url
+            self.statusBar().showMessage("Copied '%s'" % url)
 
     def toggleWordLogging(self, new_state):
         if (new_state == Qt.Checked) and not self.wordlogger.is_active():
