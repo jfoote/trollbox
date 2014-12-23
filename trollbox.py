@@ -33,7 +33,7 @@ class MainWindow(QMainWindow):
 
         self.getUrlEdit = QLineEdit(centralWidget)
         self.getUrlEdit.setPlaceholderText("Download Image URL")
-        getUrlButton = QPushButton("Get URL", centralWidget)
+        self.getUrlButton = QPushButton("Get URL", centralWidget)
 
         # Set layout
         layout = QGridLayout(centralWidget)
@@ -47,7 +47,7 @@ class MainWindow(QMainWindow):
         layout.addWidget(self.searchEdit, 5, 0)
         layout.addWidget(self.liveCheckBox, 5, 1)
         layout.addWidget(self.getUrlEdit, 6, 0)
-        layout.addWidget(getUrlButton, 6, 1)
+        layout.addWidget(self.getUrlButton, 6, 1)
 
         # Let user search by tag and URL
         self.searchEdit.textChanged.connect(self.imagePicker.setFilterTagsString)
@@ -67,7 +67,7 @@ class MainWindow(QMainWindow):
         #self.imagePicker.preDelete.connect(self.searchEdit.clear)
 
         # Set up image downloading
-        getUrlButton.clicked.connect(self.downloadImage)
+        self.getUrlButton.clicked.connect(self.downloadImage)
 
         self.getUrlEdit.setText("http://i1.kym-cdn.com/photos/images/facebook/000/390/538/deb.jpg")
 
@@ -77,9 +77,29 @@ class MainWindow(QMainWindow):
 
     def toggleWordLogging(self, new_state):
         if (new_state == Qt.Checked) and not self.wordlogger.is_active():
+            # clicking into UI elements disables live search 
+            self.searchEdit.textEdited.connect(self.liveCheckBox.clear)
+            self.urlEdit.textEdited.connect(self.liveCheckBox.clear)
+            self.tagEdit.textEdited.connect(self.liveCheckBox.clear)
+            self.getUrlEdit.textEdited.connect(self.liveCheckBox.clear)
+            self.getUrlButton.clicked.connect(self.liveCheckBox.clear)
+            self.imagePicker.clicked.connect(self.liveCheckBox.clear)
+
+            # start word logger thread
             self.wordlogger.start()
+            self.wordlogger.wordEntered.connect(self.searchEdit.setText)
         else:
+            # stop word logger thread
             self.wordlogger.stop()
+            self.wordlogger.wordEntered.disconnect(self.searchEdit.setText)
+
+            # disable connections to UI elements
+            self.searchEdit.textEdited.disconnect(self.liveCheckBox.clear)
+            self.urlEdit.textEdited.disconnect(self.liveCheckBox.clear)
+            self.tagEdit.textEdited.disconnect(self.liveCheckBox.clear)
+            self.getUrlEdit.textEdited.disconnect(self.liveCheckBox.clear)
+            self.getUrlButton.clicked.disconnect(self.liveCheckBox.clear)
+            self.imagePicker.clicked.disconnect(self.liveCheckBox.clear)
 
     def downloadImage(self):
         downloader = ImageDownloader(self)

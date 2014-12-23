@@ -1,6 +1,6 @@
 from PySide.QtCore import QObject, Signal
 from threading import Thread, Event
-import subprocess, os, shlex
+import subprocess, os, shlex, string
 
 def get_wordlogger():
     # pick keylogger based on arch here
@@ -57,15 +57,15 @@ class WordLogger(QObject):
                 # some minor support for typos
                 if len(word) > 1:
                     word = word[:-1]
-            elif len(key) > 1: # some other non-keystroke
+            elif (key in string.punctuation) or len(key) > 1: # some other non-keystroke
                 word = filter(str.isalnum, word)
                 if len(word) > 0:
-                    print "got word", word
+                    #print "got word", word
                     self.wordEntered.emit(word.strip())
                     word = ""
             elif key == '': # proc exited/EOF
                 break
             else:
                 word += key
-        print "keylogger exiting"
-        self.proc.kill() # not necessary on osx
+        print "keylogger thread exiting"
+        self.proc.kill() 
