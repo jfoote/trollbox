@@ -25,7 +25,9 @@ class WordLogger(QObject):
     def start(self):
         print "wordlogger start"
         self._stop.clear()
-        self.thread = Thread(target=self.log_keys).start()
+        self.thread = Thread(target=self.log_keys)
+        self.thread.daemon = True # handle abrupt application exit
+        self.thread.start()
 
     def stop(self):
         print "wordlogger stop"
