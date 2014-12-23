@@ -104,6 +104,7 @@ class MainWindow(QMainWindow):
 
     def clearSearch(self):
         self.searchEdit.setText("")
+        self.statusBar().showMessage("Cleared search")
 
     def copyUrl(self):
         if self.imagePicker.selectedIndexes():
@@ -119,6 +120,7 @@ class MainWindow(QMainWindow):
         else:
             self.statusBar().showMessage("Paste URL: No text on clipboard")
             print "Paste URL: No text on clipboard"
+        self.statusBar().showMessage("Pasted URL")
 
     def toggleWordLogging(self, new_state):
         if (new_state == Qt.Checked) and not self.wordlogger.is_active():
@@ -147,6 +149,7 @@ class MainWindow(QMainWindow):
             self.getUrlButton.clicked.disconnect(self.liveCheckBox.clear)
             self.pasteUrlButton.clicked.disconnect(self.liveCheckBox.clear)
             self.imagePicker.clicked.disconnect(self.liveCheckBox.clear)
+        self.statusBar().showMessage("Toggled word logger")
 
     def downloadImage(self):
         downloader = ImageDownloader(self)
@@ -155,6 +158,7 @@ class MainWindow(QMainWindow):
         downloader.success.connect(self.searchEdit.clear)
         url = self.getUrlEdit.text()
         downloader.get(url, self.imagePicker.getLocalFilepath(url))
+        self.statusBar().showMessage("Downloading %s" % url)
 
     def showDownloadError(self, message):
         mb = QMessageBox()
@@ -163,6 +167,7 @@ class MainWindow(QMainWindow):
         
     def saveTags(self):
         self.imagePicker.setTagsString(self.tagEdit.text())
+        self.statusBar().showMessage("Saved tags")
 
 class ClearableCheckBox(QCheckBox):
     @Slot()
