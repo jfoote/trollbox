@@ -39,7 +39,7 @@ class WordLogger(QObject):
         print "log_keys entered"
         word = ""
         path = os.path.join(self.bin_dir, "osx")
-        cmd = "sudo " + path
+        cmd = path
         print "cmd",cmd 
         self.proc = subprocess.Popen(shlex.split(cmd), stdout=subprocess.PIPE)
         while not self._stop.is_set():
