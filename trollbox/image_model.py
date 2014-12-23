@@ -18,6 +18,9 @@ class ImageModel(QAbstractListModel):
         self.troll_dir = troll_dir if troll_dir else default
         if not os.path.exists(self.troll_dir):
             os.mkdir(self.troll_dir)
+        image_dir = os.path.join(self.troll_dir, "images")
+        if not os.path.exists(image_dir):
+            os.mkdir(image_dir)
         self.metadata_path = os.path.join(self.troll_dir, "metadata.json")
         if os.path.exists(self.metadata_path):
             metadata = json.load(open(self.metadata_path, "rt"))
@@ -72,8 +75,8 @@ class ImageModel(QAbstractListModel):
 
         if not found:
             # if this is a new image, append it
-            ct = self.rowCount()
-            self.beginInsertRows(self.index(ct), ct, ct)
+            i = self.rowCount()
+            self.beginInsertRows(self.index(i), i, i)
             print "new image"
             self.images.append((url, tags, local_path, abs_path, icon))
             self.save()
