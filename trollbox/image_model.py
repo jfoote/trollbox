@@ -48,20 +48,38 @@ class ImageModel(QAbstractListModel):
         Adds an image with url and tags that has already been downloaded
         to local_path (relative to troll_dir) to the model.
         '''
-        ct = self.rowCount()
-        qmi = self.index(ct)
-        print "addImage qmi", qmi
-        self.beginInsertRows(qmi, ct, ct)
+        print "addImage url", url 
+
+        # set i to index of item in self.images with url, if it exists
+        found = False
+        for i in range(0, len(self.images)):
+            if self.images[i][0] == url:
+                print "%s exists at %d/%d" % (url, i, len(self.images))
+                found = True
+                break
 
         abs_path = os.path.join(self.troll_dir, local_path)
         icon = QIcon(abs_path)
-        self.images.append((url, tags, local_path, abs_path, icon))
-        self.save()
+
+        if not found:
+            # if this is a new image, append it
+            ct = self.rowCount()
+            self.beginInsertRows(self.index(ct), ct, ct)
+            print "new image"
+            self.images.append((url, tags, local_path, abs_path, icon))
+            self.save()
+            self.endInsertRows()
+        else:
+            # otherwise replace the old image and delete its disk file
+            print "replacing image at %d" % i
+            if abs_path != self.images[i][3]:
+                os.remove(self.images[i][3])
+            self.images[i] = (url, tags, local_path, abs_path, icon)
+            self.save()
+            qmi = self.index(i)
+            self.dataChanged.emit(qmi, qmi)
         
-        self.endInsertRows()
-        #self.imageAdded.emit(self.index(self.rowCount() - 1))
-        #self.imageAdded.emit(self.createIndex(self.rowCount() - 1, 0))
-        self.imageAdded.emit(self.rowCount() - 1)
+        self.imageAdded.emit(i)
 
     def save(self):
         json.dump([t[:3] for t in self.images], open(self.metadata_path, "wt"))
@@ -79,11 +97,15 @@ class ImageModel(QAbstractListModel):
         elif role == self.TagRole:
             return tags
 
-    def deleteImage(self, qmi):
-        row = qmi.row()
-        self.beginRemoveRows(qmi, row, row)
-        _, _, local_path, abs_path, _ = self.images[row]
-        del self.images[row]
+    def deleteImage(self, url):
+        for i in range(0, len(self.images)):
+            if self.images[i][0] == url:
+                print "found image at %d: %s" % (i, self.images[i])
+                break
+        qmi = self.index(i, i)
+        self.beginRemoveRows(qmi, i, i)
+        _, _, local_path, abs_path, _ = self.images[i]
+        del self.images[i]
         self.save()
         try:
             os.remove(abs_path)

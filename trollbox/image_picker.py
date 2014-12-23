@@ -73,9 +73,9 @@ class ImageSearcher(QSortFilterProxyModel):
         return True
 
     def deleteImage(self, qmi):
-        row = qmi.row()
-        self.beginRemoveRows(qmi, row, row)
-        self.sourceModel().deleteImage(qmi)
+        url = self.data(qmi)
+        self.beginRemoveRows(qmi, qmi.row(), qmi.row())
+        self.sourceModel().deleteImage(url)
         self.endRemoveRows()
 
     def getLocalFilepath(self, url):
@@ -119,7 +119,7 @@ class ImagePicker(QListView):
         Clears the current search and selects the new image
         '''
         self.setFilterTagsString("")
-        print self.model().rowCount()
+        print "rowCount()", self.model().rowCount()
         qmi = self.model().index(self.model().rowCount()-1, 0)
         print "handleImageAdded", qmi
         self.selectionModel().select(qmi, self.selectionModel().ClearAndSelect)
@@ -160,7 +160,7 @@ class ImagePicker(QListView):
         row = cur_qmi.row()
         #TODO: BUG! i need the qmi from the underlying model, not the proxy model -- this 
         # is broken when deleting from a search
-        self.model().deleteImage(cur_qmi)
+        self.model().deleteImage(cur_qmi) # calls proxy model
         print "deleted"
 
     def handlePreDelete(self, qmi, first, last):
