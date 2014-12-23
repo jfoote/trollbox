@@ -12,7 +12,6 @@ class ImageSearcher(QSortFilterProxyModel):
         QSortFilterProxyModel.__init__(self, parent)
         self.filter_tags = []
         self.filter_url = ""
-        self.setDynamicSortFilter(True)
 
     def lessThan(self, left_qmi, right_qmi):
         '''
@@ -34,6 +33,7 @@ class ImageSearcher(QSortFilterProxyModel):
         tags = [t for t in tags if t]
         self.filter_tags = tags
         self.setFilterRegExp("") # hack: triggers filter logic
+        self.sort(0, Qt.DescendingOrder)
 
     def setFilterUrl(self, url):
         '''
