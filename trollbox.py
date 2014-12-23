@@ -29,7 +29,7 @@ class MainWindow(QMainWindow):
         self.searchEdit = QLineEdit(centralWidget)
         self.searchEdit.setPlaceholderText("Image Tag Search")
         self.liveCheckBox = ClearableCheckBox("Wordlogger", centralWidget)
-        self.clearSearchButton = QPushButton("Clear/Show All", centralWidget)
+        self.clearSearchButton = QPushButton("Clear Filter", centralWidget)
         self.imagePicker = ImagePicker(centralWidget)
 
         self.getUrlEdit = QLineEdit(centralWidget)
@@ -39,34 +39,34 @@ class MainWindow(QMainWindow):
 
         # Set layout
         layout = QGridLayout(centralWidget)
-        layout.addWidget(self.imagePicker, 0, 0, 3, 3)
-        layout.setColumnStretch(0, 1)
-        layout.setColumnStretch(1, 1)
-        layout.setColumnStretch(2, 1)
+        layout.addWidget(self.imagePicker, 0, 0, 3, 5)
 
-        selectionBox = QVBoxLayout()
-        selectionBox.addWidget(self.urlEdit)
-        selectionBox.addWidget(self.tagEdit)
-        selectionBox.addWidget(saveButton)
-        selectionBox.addWidget(deleteButton)
-        layout.addLayout(selectionBox, 0, 3, 1, 1)
+        #selectionBox = QVBoxLayout()
+        layout.addWidget(QLabel("Selection:"), 5, 0)
+        layout.addWidget(self.urlEdit, 5, 1)
+        layout.addWidget(self.tagEdit, 5, 2)
+        layout.addWidget(saveButton, 5, 3)
+        layout.addWidget(deleteButton, 5, 4)
+        #layout.addLayout(selectionBox, 0, 3, 1, 1)
 
         #searchBox = QHBoxLayout()
         #searchBox.addWidget(self.searchEdit)
         #searchBox.addWidget(self.clearSearchButton)
         #searchBox.addWidget(self.liveCheckBox)
-        layout.addWidget(self.searchEdit, 5, 0, 1, 2)
-        layout.addWidget(self.liveCheckBox, 5, 2, 1, 1)
-        layout.addWidget(self.clearSearchButton, 5, 3, 1, 1)
+        layout.addWidget(QLabel("Search:"), 6, 0)
+        layout.addWidget(self.searchEdit, 6, 1, 1, 2)
+        layout.addWidget(self.liveCheckBox, 6, 3, 1, 1)
+        layout.addWidget(self.clearSearchButton, 6, 4, 1, 1)
         #layout.addLayout(searchBox, 5, 0, 1, 2)
 
         #urlBox = QHBoxLayout()
         #urlBox.addWidget(self.getUrlEdit)
         #urlBox.addWidget(self.getUrlButton)
         #urlBox.addWidget(self.pasteUrlButton)
-        layout.addWidget(self.getUrlEdit, 6, 0, 1, 2)
-        layout.addWidget(self.getUrlButton, 6, 2, 1, 1)
-        layout.addWidget(self.pasteUrlButton, 6, 3, 1, 1)
+        layout.addWidget(QLabel("Download:"), 7, 0)
+        layout.addWidget(self.getUrlEdit, 7, 1, 1, 2)
+        layout.addWidget(self.getUrlButton, 7, 3, 1, 1)
+        layout.addWidget(self.pasteUrlButton, 7, 4, 1, 1)
         #layout.addLayout(urlBox, 6, 0, 1, 2)
 
         # Let user search by tag 
@@ -85,7 +85,7 @@ class MainWindow(QMainWindow):
         deleteButton.clicked.connect(self.imagePicker.deleteSelected)
         self.imagePicker.preDelete.connect(self.tagEdit.clear)
         self.imagePicker.preDelete.connect(self.urlEdit.clear)
-        #self.imagePicker.preDelete.connect(self.searchEdit.clear)
+        self.imagePicker.preDelete.connect(self.showDeletedMessage)
 
         # Set up image downloading
         self.getUrlButton.clicked.connect(self.downloadImage)
@@ -101,6 +101,9 @@ class MainWindow(QMainWindow):
         self.imagePicker.clicked.connect(self.copyUrl)
 
         self.statusBar().showMessage("Click an image to copy its URL")
+
+    def showDeletedMessage(self):
+        self.statusBar().showMessage("Deleted image")
 
     def clearSearch(self):
         self.searchEdit.setText("")
