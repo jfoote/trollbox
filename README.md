@@ -14,14 +14,20 @@ The idea for trollbox came from a concept of "thinking in gifs," which I've foun
 
 ## Requirements 
 
-OSX is the only supported operating system at this time, though the development technologies used (Python, PySide, Qt4.8, C) should allow for porting. Just add elbow grease.
+Trollbox works on OSX, Linux, and Windows. The keylogger isn't implemented for Linux or Windows yet, but everything else works.
 
-Trollbox depends on PySide. See [the documentation](https://pypi.python.org/pypi/PySide) for up-to-date instructions on installing it.
+Trollbox depends on PySide. See [the documentation](https://pypi.python.org/pypi/PySide) for up-to-date instructions on installing it. For example, on OSX:
 
 ```
 $ brew install qt
 $ pip install -U PySide
 $ pyside_postinstall.py -install
+```
+
+And on ubuntu:
+
+```
+$ sudo apt-get install python-pyside
 ```
 
 `pip install nose` is recommended for testing.

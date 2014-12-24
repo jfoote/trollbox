@@ -1,10 +1,12 @@
 from PySide.QtCore import QObject, Signal
 from threading import Thread, Event
-import subprocess, os, shlex, string
+import subprocess, os, shlex, string, sys
 
 def get_wordlogger():
-    # pick keylogger based on arch here
-    return WordLogger()
+    if "darwin" in sys.platform.lower():
+        return WordLogger()
+    print "WordLogger not implemented for", sys.platform.lower()
+    return None
 
 class WordLogger(QObject):
     '''

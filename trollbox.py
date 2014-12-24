@@ -31,7 +31,7 @@ class MainWindow(QMainWindow):
 
         self.searchEdit = QLineEdit(centralWidget)
         self.searchEdit.setPlaceholderText("Image Tag Search")
-        self.liveCheckBox = ClearableCheckBox("Wordlogger", centralWidget)
+        self.liveCheckBox = ClearableCheckBox("WordLogger", centralWidget)
         self.clearSearchButton = QPushButton("Clear Filter", centralWidget)
         self.imagePicker = ImagePicker(centralWidget)
 
@@ -84,7 +84,10 @@ class MainWindow(QMainWindow):
 
         # Enable wordlogging support
         self.wordlogger = get_wordlogger()
-        self.liveCheckBox.stateChanged.connect(self.toggleWordLogging)
+        if self.wordlogger:
+            self.liveCheckBox.stateChanged.connect(self.toggleWordLogging)
+        else:
+            self.liveCheckBox.setEnabled(False)
 
         # Enable fast URL copying (this might be annoying)
         self.imagePicker.clicked.connect(self.copyUrl)
