@@ -8,7 +8,7 @@ Trollbox allows users to download, tag, and search for images quickly. The bold 
 
 ## About
 
-This is a toy app that I developed as part of some ongoing software/security research. The primary function of this project is to act as a test bed for some HCI data collection and experimentation. The development stack was chosen for excessive (and perhaps unfortunate) familiarity, not optimality, as the app istelf is not the focus of the research. 
+This is a toy app that I developed as part of some ongoing software engineering and security research. The primary function of this project is to act as a test bed for some HCI data collection and experimentation. The development stack was chosen for excessive (and perhaps unfortunate) familiarity, not optimality, as the app istelf is not the focus of the research. 
 
 The idea for trollbox came from a concept of "thinking in gifs," which I've found to be a key skill for effective trolling of friends and colleagues in IRC, Slack, etc. :) 
 
