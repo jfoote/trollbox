@@ -68,7 +68,7 @@ These will probably never happen. But maybe.
 
 Trollbox is a work in progress. If you actually install and use the app, please file any bugs in the Issue Tracker.
 
-*On backing up, restoring, and sharing trollboxes*
+*On backing up, restoring, and sharing trollboxes:*
 
 By default all user-specific data is stored in the `$HOME/.trollbox` directory. trollbox stores tags, URLs, and images paths in a simple JSON file at `$HOME/.trollbox/metadata.json`. Image files are named by the MD5 hash of their URL and stored in the `images` subdirectory. 
 
