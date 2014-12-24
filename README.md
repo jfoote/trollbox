@@ -62,6 +62,7 @@ These will probably never happen. But maybe.
     - https://support.google.com/websearch/answer/1325808?hl=en
     - https://www.tineye.com/
 - [ ] Add support for sharing trollboxes
+- [ ] Build the mobile version, become app store millionaire
 
 ## Development
 
