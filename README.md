@@ -54,10 +54,12 @@ This app displays (i.e. processes) data from the internet, or any other network 
 
 These will probably never happen. But maybe.
 
+- [ ] Port keylogger to Linux and Windows
+- [ ] Add animation to UI
 - [ ] Perform richer semantic analysis of input
 - [ ] Add "import from web" feature
-- [ ] Port to Linux
-- [ ] Port to Windows
+- [x] Port to Linux
+- [x] Port to Windows
 - [ ] Automatically search online image resources
     - imgur
     - flickr
@@ -69,6 +71,8 @@ These will probably never happen. But maybe.
     - https://www.tineye.com/
 - [ ] Add support for sharing trollboxes
 - [ ] Build the mobile version, become app store millionaire
+- [ ] Build the web version, get bought by Google/Facebook/et. al.
+- [ ] Wipe ass with hundos
 
 ## Development
 
