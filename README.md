@@ -36,7 +36,7 @@ $ sudo apt-get install python-pyside
 
 To build the keylogger after cloning (OSX only):
 
-``
+```
 pushd trollbox/wordlogger
 gcc -framework ApplicationServices -o osx osx.c
 popd
