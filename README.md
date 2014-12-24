@@ -32,6 +32,16 @@ $ sudo apt-get install python-pyside
 
 `pip install nose` is recommended for testing.
 
+## Setup
+
+To build the keylogger after cloning (OSX only):
+
+``
+pushd trollbox/wordlogger
+gcc -framework ApplicationServices -o osx osx.c
+popd
+```
+
 ## Usage
 
 Run Trollbox from its local directory. Such polished.
