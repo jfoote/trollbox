@@ -55,6 +55,9 @@ These will probably never happen. But maybe.
 - [ ] Automatically search online image resources
     - imgur
     - flickr
+    - replygif
+    - etc
+- [ ] Automatically suggest tags
     - https://www.mashape.com/imagesearcher/camfind#!documentation
     - https://support.google.com/websearch/answer/1325808?hl=en
     - https://www.tineye.com/
