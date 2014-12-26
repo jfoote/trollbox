@@ -36,12 +36,11 @@ def expand_tags(tags):
     for tag in tags:
         for synset in wn.synsets(tag):
             for lemma in synset.lemma_names():
-                expanded_tags.append(tag)
+                expanded_tags.append(lemma)
     expanded_tags = list(set(expanded_tags))
     if len(expanded_tags) == len(tags):
         print "no expansion"
     else:
         print "expanded", tags, "-->", expanded_tags
-        import pdb; pdb.set_trace()
     return expanded_tags
 
