@@ -34,8 +34,8 @@ class ImageModel(QAbstractListModel):
             metadata = []
 
         self.images = []
-        for url, tags, local_path in metadata:
-            self.addImage(url, tags, local_path)
+        for url, tags, rel_path in metadata:
+            self.addImage(url, tags, rel_path)
 
     def short_url(self, url):
         up = urlparse(url)
@@ -60,10 +60,10 @@ class ImageModel(QAbstractListModel):
             i = 0
         return len(self.images[i:])
 
-    def addImage(self, url, tags, local_path):
+    def addImage(self, url, tags, path):
         '''
         Adds an image with url and tags that has already been downloaded
-        to local_path (relative to troll_dir) to the model.
+        to path to the model. path can be absolute or relative to self.troll_dir
         '''
         print "addImage url", url 
 
@@ -75,7 +75,15 @@ class ImageModel(QAbstractListModel):
                 found = True
                 break
 
-        abs_path = os.path.join(self.troll_dir, local_path)
+        # if path is absolute, caculate path relative to troll_dir 
+        # and vice versa
+        if os.path.isabs(path):
+            abs_path = path
+            rel_path = path[len(self.troll_dir)+1:]
+            print "abs_path", abs_path, "rel_path", rel_path
+        else:
+            abs_path = os.path.join(self.troll_dir, path)
+            rel_path = path
         icon = QIcon(abs_path)
         expanded_tags = expand_tags(tags)
 
@@ -84,7 +92,7 @@ class ImageModel(QAbstractListModel):
             i = self.rowCount()
             self.beginInsertRows(self.index(i), i, i)
             print "new image"
-            self.images.append((url, tags, local_path, abs_path, icon, expanded_tags))
+            self.images.append((url, tags, rel_path, abs_path, icon, expanded_tags))
             self.save()
             self.endInsertRows()
         else:
@@ -92,7 +100,7 @@ class ImageModel(QAbstractListModel):
             print "replacing image at %d" % i
             if abs_path != self.images[i][3]:
                 os.remove(self.images[i][3])
-            self.images[i] = (url, tags, local_path, abs_path, icon, expanded_tags)
+            self.images[i] = (url, tags, rel_path, abs_path, icon, expanded_tags)
             self.save()
             qmi = self.index(i)
             self.dataChanged.emit(qmi, qmi)
@@ -107,7 +115,7 @@ class ImageModel(QAbstractListModel):
         Returns the image data for role stored at index
         """
         index = qmi.row()
-        url, tags, local_path, abs_path, icon, expanded_tags = self.images[index]
+        url, tags, rel_path, abs_path, icon, expanded_tags = self.images[index]
         short_url = self.short_url(url)
         if role == Qt.DecorationRole:
             return icon
@@ -125,7 +133,7 @@ class ImageModel(QAbstractListModel):
                 break
         qmi = self.index(i, i)
         self.beginRemoveRows(qmi, i, i)
-        _, _, local_path, abs_path, _, _ = self.images[i]
+        _, _, rel_path, abs_path, _, _ = self.images[i]
         del self.images[i]
         self.save()
         try:
@@ -139,14 +147,14 @@ class ImageModel(QAbstractListModel):
         Sets the role data for image stored at index to value
         """
         index = qmi.row()
-        url, tags, local_path, abs_path, icon, expanded_tags = self.images[index]
+        url, tags, rel_path, abs_path, icon, expanded_tags = self.images[index]
         print "value", value
         if role == Qt.DisplayRole:
             url = value
         elif role == self.TagRole:
             tags = value
             expanded_tags = expand_tags(tags)
-        self.images[index] = url, tags, local_path, abs_path, icon, expanded_tags
+        self.images[index] = url, tags, rel_path, abs_path, icon, expanded_tags
         self.save()
         self.dataChanged.emit(qmi, qmi)
         return True
