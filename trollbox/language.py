@@ -1,30 +1,28 @@
 
-no_wordnet = False
+has_wordnet = None
 def wordnet_available():
     '''
     Returns True if wordnet is available, False otherwise.
     With poor-mans memoization.
     '''
-    global no_wordnet
-    if no_wordnet:
-        return False
+    global has_wordnet
+    if has_wordnet != None:
+        return has_wordnet
 
     try:
+        print "loading wordnet corpus"
         from nltk.corpus import wordnet as wn
-    except ModuleError:
-        no_wordnet = True
-        print "not expanding tags: couldn't load nltk"
-        return False
-
-    try:
         wn.synsets("dog")
+        has_wordnet = True
+    except ImportError:
+        has_wordnet = False
+        print "not expanding tags: couldn't load nltk"
     except LookupError as e:
-        no_wordnet = True
+        has_wordnet = False
         print"not expanding tags: found nltk, but couldn't load wordnet " +\
                 "corpus. nltk error message follows"
         print str(e)
-        return False
-    return True
+    return has_wordnet
 
 def expand_tags(tags):
     if not wordnet_available():
@@ -36,7 +34,8 @@ def expand_tags(tags):
     for tag in tags:
         for synset in wn.synsets(tag):
             for lemma in synset.lemma_names():
-                expanded_tags.append(lemma)
+                for word in lemma.split("_"): # no support for phrases
+                    expanded_tags.append(lemma)
     expanded_tags = list(set(expanded_tags))
     if len(expanded_tags) == len(tags):
         print "no expansion"

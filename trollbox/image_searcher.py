@@ -18,10 +18,10 @@ class ImageSearcher(QSortFilterProxyModel):
         If data at left_qmi matches fewer tags than data at right_qmi returns
         True. Returns False otherwise.
         '''
-        left_tags = self.sourceModel().data(left_qmi, ImageModel.TagRole)
+        left_tags = self.sourceModel().data(left_qmi, ImageModel.ExpandedTagRole)
         left_int = set(self.filter_tags).intersection(set(left_tags))
 
-        right_tags = self.sourceModel().data(right_qmi, ImageModel.TagRole)
+        right_tags = self.sourceModel().data(right_qmi, ImageModel.ExpandedTagRole)
         right_int = set(self.filter_tags).intersection(set(right_tags))
 
         return len(left_int) < len(right_int)
@@ -55,12 +55,12 @@ class ImageSearcher(QSortFilterProxyModel):
         '''
 
         qmi = self.sourceModel().index(row_index, 0, parent_qmi)
-        tags = self.sourceModel().data(qmi, ImageModel.TagRole)
+        e_tags = self.sourceModel().data(qmi, ImageModel.ExpandedTagRole)
         url = self.sourceModel().data(qmi, ImageModel.UrlRole)
 
         # if no tags set, show all images
         if self.filter_tags:
-            intersection  = set(tags).intersection(set(self.filter_tags))
+            intersection  = set(e_tags).intersection(set(self.filter_tags))
         else:
             intersection = True
 

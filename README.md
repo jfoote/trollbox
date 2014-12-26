@@ -30,6 +30,17 @@ And on ubuntu:
 $ sudo apt-get install python-pyside
 ```
 
+### Optional for search enhancement
+
+Trollbox will work fine without this, but to add support for expansion of search terms you'll need [python NLTK](http://www.nltk.org/) and the [wordnet](http://www.nltk.org/howto/wordnet.html) corpus:
+
+```
+$ pip install nltk
+$ python -m nltk.download wordnet
+```
+
+Note that the above will download the corpus to `~/nltk_data`. To install it somewhere else, try `python -m nltk.downloader -d /usr/share/nltk_data wordnet` or similar.
+
 `pip install nose` is recommended for testing.
 
 ## Setup

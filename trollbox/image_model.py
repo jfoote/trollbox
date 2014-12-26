@@ -13,6 +13,7 @@ class ImageModel(QAbstractListModel):
     '''
     TagRole = 0x101
     UrlRole = 0x102
+    ExpandedTagRole = 0x103
 
     imageAdded = Signal(int)
     
@@ -125,6 +126,8 @@ class ImageModel(QAbstractListModel):
             return url
         elif role == self.TagRole:
             return tags
+        elif role == self.ExpandedTagRole:
+            return expanded_tags
 
     def deleteImage(self, url):
         for i in range(0, len(self.images)):
