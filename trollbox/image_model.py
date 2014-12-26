@@ -77,13 +77,14 @@ class ImageModel(QAbstractListModel):
 
         abs_path = os.path.join(self.troll_dir, local_path)
         icon = QIcon(abs_path)
+        expanded_tags = expand_tags(tags)
 
         if not found:
             # if this is a new image, append it
             i = self.rowCount()
             self.beginInsertRows(self.index(i), i, i)
             print "new image"
-            self.images.append((url, tags, local_path, abs_path, icon))
+            self.images.append((url, tags, local_path, abs_path, icon, expanded_tags))
             self.save()
             self.endInsertRows()
         else:
@@ -91,7 +92,7 @@ class ImageModel(QAbstractListModel):
             print "replacing image at %d" % i
             if abs_path != self.images[i][3]:
                 os.remove(self.images[i][3])
-            self.images[i] = (url, tags, local_path, abs_path, icon)
+            self.images[i] = (url, tags, local_path, abs_path, icon, expanded_tags)
             self.save()
             qmi = self.index(i)
             self.dataChanged.emit(qmi, qmi)
@@ -106,7 +107,7 @@ class ImageModel(QAbstractListModel):
         Returns the image data for role stored at index
         """
         index = qmi.row()
-        url, tags, local_path, abs_path, icon = self.images[index]
+        url, tags, local_path, abs_path, icon, expanded_tags = self.images[index]
         short_url = self.short_url(url)
         if role == Qt.DecorationRole:
             return icon
@@ -124,7 +125,7 @@ class ImageModel(QAbstractListModel):
                 break
         qmi = self.index(i, i)
         self.beginRemoveRows(qmi, i, i)
-        _, _, local_path, abs_path, _ = self.images[i]
+        _, _, local_path, abs_path, _, _ = self.images[i]
         del self.images[i]
         self.save()
         try:
@@ -138,13 +139,14 @@ class ImageModel(QAbstractListModel):
         Sets the role data for image stored at index to value
         """
         index = qmi.row()
-        url, tags, local_path, abs_path, icon = self.images[index]
+        url, tags, local_path, abs_path, icon, expanded_tags = self.images[index]
         print "value", value
         if role == Qt.DisplayRole:
             url = value
         elif role == self.TagRole:
             tags = value
-        self.images[index] = url, tags, local_path, abs_path, icon
+            expanded_tags = expand_tags(tags)
+        self.images[index] = url, tags, local_path, abs_path, icon, expanded_tags
         self.save()
         self.dataChanged.emit(qmi, qmi)
         return True
