@@ -6,6 +6,8 @@ import PySide
 from PySide.QtGui import *
 from PySide.QtCore import Slot, Qt
 
+from argparse import ArgumentParser
+
 from trollbox.image_picker import ImagePicker
 from trollbox.image_downloader import ImageDownloader
 from trollbox.wordlogger import get_wordlogger
@@ -170,7 +172,15 @@ class ClearableCheckBox(QCheckBox):
         self.setChecked(False)
 
 if __name__ == "__main__":
+    parser = ArgumentParser(description="A searchable database of imagse")
+    parser.add_argument("-a", "--alwaysontop", action='store_true', 
+            help="Window always on top")
+    args = parser.parse_args()
+    
     app = QApplication(sys.argv)
     window = MainWindow()
+    if args.alwaysontop:
+        window.setWindowFlags(Qt.WindowStaysOnTopHint)
+
     window.show()
     sys.exit(app.exec_())
