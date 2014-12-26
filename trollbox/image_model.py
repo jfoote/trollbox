@@ -4,6 +4,8 @@ from urlparse import urlparse, urljoin
 from PySide.QtCore import QAbstractListModel, QModelIndex, Qt, Signal
 from PySide.QtGui import QIcon
 
+from trollbox.language import expand_tags
+
 class ImageModel(QAbstractListModel):
     '''
     QAbstractListModel that stores images and metadata to a directory on 
@@ -33,8 +35,7 @@ class ImageModel(QAbstractListModel):
 
         self.images = []
         for url, tags, local_path in metadata:
-            abs_path = os.path.join(self.troll_dir, local_path)
-            self.images.append((url, tags, local_path, abs_path, QIcon(abs_path)))
+            self.addImage(url, tags, local_path)
 
     def short_url(self, url):
         up = urlparse(url)
